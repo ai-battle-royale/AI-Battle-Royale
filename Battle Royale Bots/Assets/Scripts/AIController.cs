@@ -27,6 +27,8 @@ public class AIController : MonoBehaviour {
     public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
+    public List<Item> Items = new List<Item>();
+
     public float    Health     { get; private set; } = 100f;
     public float    Armor      { get; private set; } = 0f;
     public bool     IsMoving   { get; private set; } = false;
@@ -40,6 +42,16 @@ public class AIController : MonoBehaviour {
 
     void Update() {
         characterController.Move(GetDirectionFromAngle(moveAngle) * MoveSpeed * Time.deltaTime);
+    }
+
+    public bool HasItem<T> () where T : Item {
+        return Items.Exists(x => x is T);
+    }
+
+    public void UseItem<T>() where T : Item {
+        var item = Items.Find(x => x is T);
+
+        item.Use();
     }
 
     // There's probably already a built-in function for this
