@@ -5,17 +5,25 @@ using UnityEngine;
 public class AITest : MonoBehaviour
 {
 
+    public float moveAngle;
     AIController Controller;
 
     void Start()  {
         Controller = GetComponent<AIController>();
+
+        moveAngle = Random.value * 360;
     }
 
-    void Update() {       
-        for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI/10) {
-            Controller.Scan(i);
-        }
+    void Update() {
+        Controller.Move(moveAngle);
 
-        Controller.Move(45);
+        for (var i = 0f; i < 360; i += 10) {
+            var scan = Controller.Scan(i);
+
+            if (scan.Type == HitType.World)
+            {
+                moveAngle += (i - moveAngle) * 0.25f;
+            }
+        }
     }
 }

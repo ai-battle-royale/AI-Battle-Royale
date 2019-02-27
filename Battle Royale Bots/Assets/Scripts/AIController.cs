@@ -56,6 +56,8 @@ public class AIController : MonoBehaviour {
 
     // There's probably already a built-in function for this
     Vector3 GetDirectionFromAngle (float angle) {
+        angle *= Mathf.Deg2Rad;
+
         return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
     }
     
