@@ -28,22 +28,23 @@ public class AIController : MonoBehaviour {
     public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
+    public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
     public float    Health     { get; private set; } = 100f;
     public float    Armor      { get; private set; } = 0f;
-    public float    LookRange   => Mathf.Max(weaponController.Range, MaxLookDistance);
-    public int      Ammo        => weaponController.Ammo;
+    public float    LookRange   => Mathf.Max(Weapon.Range, MaxLookDistance);
+    public int      Ammo        => Weapon.Ammo;
 
     private CharacterController characterController;
-    private Weapon weaponController;
     private bool canShoot = true;
     private RectTransform labelObject;
     private BotLabel botLabel;
 
     void Start() {
         characterController = GetComponent<CharacterController>();
-        weaponController = GetComponent<Weapon>();
+
+        Weapon = Weapon.Instantiate<Weapon>(gameObject);
 
         var canvas = GameObject.FindGameObjectWithTag("Canvas");
 
@@ -89,6 +90,7 @@ public class AIController : MonoBehaviour {
 
         return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
     }
+
     public ScanInfo Scan(Vector3 direction) {
         return Scan(direction, DefaultLayerMask);
     }
@@ -119,6 +121,6 @@ public class AIController : MonoBehaviour {
     }
 
     public void Shoot(Vector3 direction) {
-        weaponController.Shoot(direction);
+        Weapon.Shoot(direction);
     }
 }

@@ -22,13 +22,14 @@ public class AITest : MonoBehaviour {
             if (scan.Type == HitType.World) {
                 direction = Vector3.Slerp(direction, -dir, 1 - (scan.Distance / Controller.MaxLookDistance) );
             } else if (scan.Type == HitType.Enemy) {
-                Controller.Shoot(dir);
+                //Controller.Shoot(dir);
                 direction = scan.Distance > 2f ? dir : -dir;
 
                 break;
             }
         }
 
-        Controller.Move(direction);       
+        Controller.Shoot(Vector3.forward);
+        //Controller.Move(direction);       
     }
 }
