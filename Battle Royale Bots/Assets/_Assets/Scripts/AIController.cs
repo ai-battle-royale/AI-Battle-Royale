@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct ScanInfo {
     public float Distance;
@@ -27,25 +28,49 @@ public class AIController : MonoBehaviour {
     public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
-    public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
     public float    Health     { get; private set; } = 100f;
     public float    Armor      { get; private set; } = 0f;
-    public bool     IsMoving   { get; private set; } = false;
-    
+    public float    LookRange   => Mathf.Max(weaponController.Range, MaxLookDistance);
+    public int      Ammo        => weaponController.Ammo;
+
     private CharacterController characterController;
-    private float moveAngle;
+    private Weapon weaponController;
+    private bool canShoot = true;
+    private RectTransform labelObject;
+    private BotLabel botLabel;
 
     void Start() {
         characterController = GetComponent<CharacterController>();
+        weaponController = GetComponent<Weapon>();
+
+        var canvas = GameObject.FindGameObjectWithTag("Canvas");
+
+        labelObject = Instantiate(Resources.Load("Prefabs/BotLabel") as GameObject, canvas.transform, false).GetComponent<RectTransform>();
+
+        botLabel = labelObject.GetComponent<BotLabel>();
+        botLabel.SetText(gameObject.name);
     }
 
     void Update() {
-        //if (IsMoving)
-        //{
-        //    characterController.Move(GetDirectionFromAngle(moveAngle) * MoveSpeed * Time.deltaTime);
-        //}
+        labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0,50,0);
+
+        botLabel.SetSliders(Health / 100, Armor / 100);
+    }
+
+    public void TakeDamage (float amount) {
+        var damageToHealth = Mathf.Max(0, amount - Armor);
+
+        Armor = Mathf.Max(0, Armor - amount);
+        Health = Mathf.Max(0, Health - damageToHealth);
+
+        if (Health == 0) {
+            print($"Bot '{gameObject.name}' died!");
+
+            Destroy(gameObject);
+            Destroy(labelObject.gameObject);
+        }
     }
 
     public bool HasItem<T> () where T : Item {
@@ -64,20 +89,28 @@ public class AIController : MonoBehaviour {
 
         return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
     }
-    
-    public ScanInfo Scan (Vector3 direction, LayerMask mask = default) {
+    public ScanInfo Scan(Vector3 direction) {
+        return Scan(direction, DefaultLayerMask);
+    }
 
-        if (mask == default) mask = DefaultLayerMask;
-
-        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, MaxLookDistance, mask)) {
+    public ScanInfo Scan (Vector3 direction, LayerMask mask) {
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, LookRange, mask)) {
             Debug.DrawLine(transform.position, hit.point, Color.red);
 
-            return new ScanInfo(hit.distance, HitType.World);
+            var hitType = HitType.World;
+
+            var isEnemy = hit.collider.gameObject?.GetComponent<AIController>() != null;
+
+            if (isEnemy) {
+                hitType = HitType.Enemy;
+            }
+
+            return new ScanInfo(hit.distance, hitType);
         }
         else {
-            Debug.DrawLine(transform.position, transform.position + direction * MaxLookDistance, Color.green);
+            Debug.DrawLine(transform.position, transform.position + direction * LookRange, Color.green);
 
-            return new ScanInfo(MaxLookDistance, HitType.None);
+            return new ScanInfo(LookRange, HitType.None);
         }
     }
 
@@ -85,7 +118,7 @@ public class AIController : MonoBehaviour {
         characterController.Move(Vector3.ClampMagnitude(direction, MoveSpeed) * MoveSpeed * Time.deltaTime);
     }
 
-    public void Stop() {
-        IsMoving = false;
+    public void Shoot(Vector3 direction) {
+        weaponController.Shoot(direction);
     }
 }
