@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WeaponSMG : Weapon
 {
+    public override AmmoType AmmoType => AmmoType.Light;
     public override float Damage => 10f;
     public override float Range => 5f;
     public override int BaseAmmo => 100;

@@ -6,6 +6,7 @@ public abstract class Weapon : ScriptableObject {
 
     public GameObject Owner;
 
+    public abstract AmmoType AmmoType { get; }
     public abstract float Damage { get; }
     public abstract float Range { get; }
     public abstract int BaseAmmo { get; }
@@ -19,7 +20,7 @@ public abstract class Weapon : ScriptableObject {
     private void Awake() {
         Ammo = BaseAmmo;
 
-        // Ensure that the gun can fire when the game starts
+        // Ensure that the gun can fire when the game starts.
         lastFireTime = Time.time - FireDelay;
     }
 
@@ -30,19 +31,19 @@ public abstract class Weapon : ScriptableObject {
         return weapon;
     }
 
-    // Overridable for when we want to make other weapon types (explosive stuff for example)
+    // Overridable for when we want to make other weapon types (explosive stuff for example).
     public virtual void OnHit(AIController enemy) {
         enemy.TakeDamage(Damage);
     }
 
-    // Shooting behaviour could also be overriden if needed
+    // Shooting behaviour could also be overridden if needed.
     public virtual void Shoot(Vector3 direction) {
         direction.Normalize();
 
         if ((Time.time - lastFireTime) >= FireDelay && Ammo > 0) {
             lastFireTime = Time.time;
 
-            // Randomize direction based on precision
+            // Randomize direction based on precision.
             direction = (Quaternion.LookRotation(direction, Vector3.up) * Quaternion.Euler(0,(Random.value * 2 - 1) * Precision,0)) * Vector3.forward;
 
             var debugLineColor = Color.cyan;
