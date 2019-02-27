@@ -27,6 +27,7 @@ public class AIController : MonoBehaviour {
     public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
+    public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
     public float    Health     { get; private set; } = 100f;
@@ -81,7 +82,7 @@ public class AIController : MonoBehaviour {
     }
 
     public void Move (Vector3 direction) {
-        characterController.Move(direction * MoveSpeed * Time.deltaTime);
+        characterController.Move(Vector3.ClampMagnitude(direction, MoveSpeed) * MoveSpeed * Time.deltaTime);
     }
 
     public void Stop() {
