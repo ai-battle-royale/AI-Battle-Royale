@@ -32,7 +32,7 @@ public class AIController : MonoBehaviour {
     public float    Health     { get; private set; } = 100f;
     public float    Armor      { get; private set; } = 0f;
     public bool     IsMoving   { get; private set; } = false;
-
+    
     private CharacterController characterController;
     private float moveAngle;
 
@@ -41,7 +41,10 @@ public class AIController : MonoBehaviour {
     }
 
     void Update() {
-        characterController.Move(GetDirectionFromAngle(moveAngle) * MoveSpeed * Time.deltaTime);
+        //if (IsMoving)
+        //{
+        //    characterController.Move(GetDirectionFromAngle(moveAngle) * MoveSpeed * Time.deltaTime);
+        //}
     }
 
     public bool HasItem<T> () where T : Item {
@@ -61,25 +64,24 @@ public class AIController : MonoBehaviour {
         return new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
     }
     
-    public ScanInfo Scan (float angle, LayerMask mask = default) {
+    public ScanInfo Scan (Vector3 direction, LayerMask mask = default) {
 
         if (mask == default) mask = DefaultLayerMask;
 
-        if (Physics.Raycast(transform.position, GetDirectionFromAngle(angle), out RaycastHit hit, MaxLookDistance, mask)) {
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, MaxLookDistance, mask)) {
             Debug.DrawLine(transform.position, hit.point, Color.red);
 
             return new ScanInfo(hit.distance, HitType.World);
         }
         else {
-            Debug.DrawLine(transform.position, transform.position + GetDirectionFromAngle(angle) * MaxLookDistance, Color.green);
+            Debug.DrawLine(transform.position, transform.position + direction * MaxLookDistance, Color.green);
 
             return new ScanInfo(MaxLookDistance, HitType.None);
         }
     }
 
-    public void Move (float angle) {
-        IsMoving = true;
-        moveAngle = angle;
+    public void Move (Vector3 direction) {
+        characterController.Move(direction * MoveSpeed * Time.deltaTime);
     }
 
     public void Stop() {
