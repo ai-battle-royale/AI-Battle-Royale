@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Weapon : ScriptableObject {
 
     public GameObject Owner;
+    public AIController Controller;
 
     public abstract AmmoType AmmoType { get; }
     public abstract float Damage { get; }
@@ -26,7 +27,9 @@ public abstract class Weapon : ScriptableObject {
 
     public static T Instantiate<T>(GameObject owner) where T : Weapon {
         var weapon = CreateInstance<T>();
+
         weapon.Owner = owner;
+        weapon.Controller = owner.GetComponent<AIController>();
 
         return weapon;
     }

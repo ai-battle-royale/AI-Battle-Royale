@@ -41,17 +41,21 @@ public class AIController : MonoBehaviour {
     private RectTransform labelObject;
     private BotLabel botLabel;
 
-    void Start() {
-        characterController = GetComponent<CharacterController>();
-
-        Weapon = Weapon.Instantiate<WeaponSMG>(gameObject);
-
+    void CreateLabel () {
         var canvas = GameObject.FindGameObjectWithTag("Canvas");
 
         labelObject = Instantiate(Resources.Load("Prefabs/BotLabel") as GameObject, canvas.transform, false).GetComponent<RectTransform>();
 
         botLabel = labelObject.GetComponent<BotLabel>();
         botLabel.SetText(gameObject.name);
+    }
+
+    void Start() {
+        characterController = GetComponent<CharacterController>();
+
+        Weapon = Weapon.Instantiate<WeaponSMG>(gameObject);
+
+        CreateLabel();
     }
 
     void Update() {
