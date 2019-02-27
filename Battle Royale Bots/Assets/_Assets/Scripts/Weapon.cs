@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : ScriptableObject {
+public abstract class Weapon : ScriptableObject {
 
     public GameObject Owner;
 
-    public virtual float Damage => 25f;
-    public virtual float Range => 5f;
-    public virtual int BaseAmmo => 25;
-    public virtual float FireDelay => 1f;
-    public virtual float Precision => 2f;
+    public abstract float Damage { get; }
+    public abstract float Range { get; }
+    public abstract int BaseAmmo { get; }
+    public abstract float FireDelay { get; }
+    public abstract float Precision { get; }
 
     public int Ammo { get; set; }
 

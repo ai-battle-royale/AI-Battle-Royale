@@ -44,7 +44,7 @@ public class AIController : MonoBehaviour {
     void Start() {
         characterController = GetComponent<CharacterController>();
 
-        Weapon = Weapon.Instantiate<Weapon>(gameObject);
+        Weapon = Weapon.Instantiate<WeaponSMG>(gameObject);
 
         var canvas = GameObject.FindGameObjectWithTag("Canvas");
 
