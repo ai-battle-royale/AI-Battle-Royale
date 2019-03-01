@@ -24,13 +24,16 @@ public enum HitType {
 public class BattleBotInterface : MonoBehaviour {
 
     // These constants should be moved over to a game manager
+    [Header("Bot Stats (moving to a game manager)")]
     public float MaxLookDistance = 5f;
     public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
+    [Header("Bot Inventory/Equipment")]
     public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
+    //[Header("Bot Stats")]
     public float    Health     { get; set; } = 100f;
     public float    Armor      { get; set; } = 0f;
     public float    LookRange   => Mathf.Max(Weapon.Range, MaxLookDistance);
@@ -61,9 +64,12 @@ public class BattleBotInterface : MonoBehaviour {
 
     void Update() {
         // Set the name label position on the canvas.
-        labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0,50,0);
+        if (labelObject != null)
+        {
+            labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, 50, 0);
 
-        botLabel.SetSliders(Health / 100, Armor / 100);
+            botLabel.SetSliders(Health / 100, Armor / 100);
+        }
     }
 
     /// <summary>
