@@ -6,11 +6,11 @@ public class AITest : MonoBehaviour {
 
     bool canSeeEnemy;
     Vector3 direction;
-    AIController Controller;
+    BattleBotInterface Controller;
     float angleOffset;
 
     void Start()  {
-        Controller = GetComponent<AIController>();
+        Controller = GetComponent<BattleBotInterface>();
 
         direction = new Vector3(Random.value, 0, Random.value);
     }
