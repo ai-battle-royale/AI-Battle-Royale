@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  name: 
+  name: SMG
   ammoType: 0
-  damage: 0
-  range: 0
-  baseAmmo: 0
-  fireDelay: 0
-  precision: 0
+  damage: 10
+  range: 3
+  baseAmmo: 9999999
+  fireDelay: 0.1
+  precision: 3

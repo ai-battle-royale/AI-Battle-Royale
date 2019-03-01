@@ -59,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultWeapon: {fileID: 11400000, guid: 1e03a31b2eef6d246b3a1cd5644f3829, type: 2}
   maxLookDistance: 5
-  moveSpeed: 1
+  moveSpeed: 3
   maxHealth: 100
   maxArmor: 100
-  pickupRange: 1
+  pickupRange: 2

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Pickup : MonoBehaviour {
+
     public void Interact (BattleBotInterface bot) {
         OnInteract(bot);
 

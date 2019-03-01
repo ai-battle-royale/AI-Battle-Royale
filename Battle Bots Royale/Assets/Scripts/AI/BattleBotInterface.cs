@@ -27,14 +27,16 @@ public class BattleBotInterface : MonoBehaviour {
     public Weapon weapon;
     public List<Item> items = new List<Item>();
 
-    public float    Health     { get; set; }
-    public float    Armor      { get; set; }
+    [ReadOnly] public float health;
+    [ReadOnly] public float armor;
     public float    LookRange   => Mathf.Max(weapon.range, GameManager.instance.maxLookDistance);
     public int      Ammo        => weapon.Ammo;
+    public bool IsUsingItem;
 
     private CharacterController characterController;
     private RectTransform labelObject;
     private BotLabel botLabel;
+    private Item lastUsedItem;
 
     void CreateLabel () {
         var canvas = GameObject.FindGameObjectWithTag("Canvas");
@@ -47,7 +49,7 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     void Start() {
-        Health = GameManager.instance.maxHealth;
+        health = GameManager.instance.maxHealth;
 
         characterController = GetComponent<CharacterController>();
 
@@ -62,7 +64,7 @@ public class BattleBotInterface : MonoBehaviour {
         {
             labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, 50, 0);
 
-            botLabel.SetSliders(Health / 100, Armor / 100);
+            botLabel.SetSliders(health / 100, armor / 100);
         }
     }
 
@@ -71,12 +73,12 @@ public class BattleBotInterface : MonoBehaviour {
     /// </summary>
     public void TakeDamage (float amount) {
         // How much damage will be subtracted from the health value.
-        var damageToHealth = Mathf.Max(0, amount - Armor);
+        var damageToHealth = Mathf.Max(0, amount - armor);
 
-        Armor = Mathf.Max(0, Armor - amount);
-        Health = Mathf.Max(0, Health - damageToHealth);
+        armor = Mathf.Max(0, armor - amount);
+        health = Mathf.Max(0, health - damageToHealth);
 
-        if (Health == 0) {
+        if (health == 0) {
             print($"Bot '{gameObject.name}' died!");
 
             Destroy(gameObject);
@@ -95,7 +97,13 @@ public class BattleBotInterface : MonoBehaviour {
     /// Checks if the BattleBot has an item of type T
     /// </summary>
     public void UseItem(Item item) {
-        item.Use();
+        if (IsUsingItem) return;
+
+        if (items.Contains(item)) {
+            items.Remove(item);
+
+            item.Use();
+        }
     }
 
     /// <summary>
@@ -106,11 +114,11 @@ public class BattleBotInterface : MonoBehaviour {
         var debugLineColor = Color.magenta;
         var debugLineEnd = transform.position + direction * GameManager.instance.pickupRange;
 
-        if (Physics.Raycast(transform.position + direction, direction, out RaycastHit hit, GameManager.instance.pickupRange)) {
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit, GameManager.instance.pickupRange)) {
             debugLineEnd = hit.point;
 
             if (hit.collider.gameObject == pickup.gameObject) {
-                pickup.OnInteract(this);
+                pickup.Interact(this);
 
                 print($"Interacted with pickup {pickup}");
 
@@ -158,6 +166,8 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
+        if (IsUsingItem) return;
+
         characterController.Move(Vector3.ClampMagnitude(direction, GameManager.instance.moveSpeed) * GameManager.instance.moveSpeed * Time.deltaTime);
     }
 
@@ -165,6 +175,8 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot shoot in the given direction.
     /// </summary>
     public void Shoot(Vector3 direction) {
+        if (IsUsingItem) return;
+
         weapon.Shoot(direction);
     }
 }

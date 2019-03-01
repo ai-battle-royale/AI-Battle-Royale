@@ -8,6 +8,13 @@ public abstract class OwnedObject : ScriptableObject
     [HideInInspector] public GameObject owner;
     [HideInInspector] public BattleBotInterface controller;
 
+    void Awake () {
+        Debug.Log($"{this} awoke");
+
+        if (!OwnedObjectObserver.instance.objects.Contains(this))
+            OwnedObjectObserver.instance.objects.Add(this);
+    }
+
     /// <summary>
     /// Instantiates an OwnedObject of type T with the given owner.
     /// </summary>

@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: c61609a87c73eca42a999154b2d31eec, type: 3}
   m_Name: Medkit
-  m_EditorClassIdentifier: Assembly-CSharp::HealingItem
+  m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
   ConsumptionTime: 3

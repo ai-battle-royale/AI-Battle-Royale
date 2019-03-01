@@ -8,6 +8,8 @@ public class AITest : MonoBehaviour {
     Vector3 direction;
     BattleBotInterface Controller;
     float angleOffset;
+    bool isPickingUpItem = false;
+    Pickup pickupTarget;
 
     void Start()  {
         Controller = GetComponent<BattleBotInterface>();
@@ -15,10 +17,6 @@ public class AITest : MonoBehaviour {
         direction = new Vector3(Random.value, 0, Random.value);
 
         //Controller.TakeDamage(75f);
-
-        Controller.items.Add(OwnedObject.Instantiate<HealingItem>(gameObject));
-
-        Controller.UseItem(Controller.FindItem<HealingItem>());
     }
 
     void Update() {
@@ -41,12 +39,24 @@ public class AITest : MonoBehaviour {
                 break;
             }
             else if (scan.type == HitType.Item) {
-                var pickup = scan.pickup;
+                pickupTarget = scan.pickup;
 
-                break;
+                direction = (pickupTarget.transform.position - transform.position).normalized;
+
+                isPickingUpItem = true;
             }
         }
 
-        Controller.Move(direction);       
+        Controller.Move(direction);
+
+        if (pickupTarget != null) {
+            if (isPickingUpItem && Vector3.Distance(pickupTarget.transform.position, transform.position) < GameManager.instance.pickupRange) {
+                Controller.Pickup(pickupTarget);
+            }
+        }
+
+        if (Controller.health < 100) {
+            Controller.UseItem(Controller.FindItem<HealingItem>());
+        }
     }
 }
