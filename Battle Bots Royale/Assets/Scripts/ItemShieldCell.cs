@@ -7,6 +7,6 @@ public class ItemShieldCell : Item {
     public override float ConsumptionTime => 1f;
 
     public override void OnUse() {
-        Controller.Armor = Mathf.Min(Controller.Armor + Amount, GameManager.Instance.MaxArmor);
+        controller.Armor = Mathf.Min(controller.Armor + Amount, GameManager.instance.maxArmor);
     }
 }

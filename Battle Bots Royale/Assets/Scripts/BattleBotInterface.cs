@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public struct ScanInfo {
-    public GameObject Object;
-    public float Distance;
-    public HitType Type;
+    public GameObject gameobject;
+    public float distance;
+    public HitType type;
 
     public ScanInfo (GameObject obj, float d, HitType t) {
-        Object = obj;
-        Distance = d;
-        Type = t;
+        gameobject = obj;
+        distance = d;
+        type = t;
     }
 }
 
@@ -24,13 +24,13 @@ public enum HitType {
 
 [RequireComponent(typeof(CharacterController))]
 public class BattleBotInterface : MonoBehaviour {
-    public Weapon Weapon;
-    public List<Item> Items = new List<Item>();
+    public Weapon weapon;
+    public List<Item> items = new List<Item>();
 
     public float    Health     { get; set; }
     public float    Armor      { get; set; }
-    public float    LookRange   => Mathf.Max(Weapon.Range, GameManager.Instance.MaxLookDistance);
-    public int      Ammo        => Weapon.Ammo;
+    public float    LookRange   => Mathf.Max(weapon.Range, GameManager.instance.maxLookDistance);
+    public int      Ammo        => weapon.Ammo;
 
     private CharacterController characterController;
     private RectTransform labelObject;
@@ -47,11 +47,11 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     void Start() {
-        Health = GameManager.Instance.MaxHealth;
+        Health = GameManager.instance.maxHealth;
 
         characterController = GetComponent<CharacterController>();
 
-        Weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
+        weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
 
         CreateLabel();
     }
@@ -85,7 +85,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// Checks if the BattleBot has an item of type T
     /// </summary>
     public T FindItem<T> () where T : Item {
-        return (T)Items.Find(x => x is T);
+        return (T)items.Find(x => x is T);
     }
 
     /// <summary>
@@ -99,15 +99,9 @@ public class BattleBotInterface : MonoBehaviour {
     /// Scans for objects in the given layermask and returns a ScanInfo result.
     /// </summary>
     /// <returns>A ScanInfo result.</returns>
-    public ScanInfo Scan(Vector3 direction) {
-        return Scan(direction, LayerMask.NameToLayer("Everything"));
-    }
+    public ScanInfo Scan (Vector3 direction, LayerMask mask = default) {
+        if (mask == default) mask = LayerMask.NameToLayer("Everything");
 
-    /// <summary>
-    /// Scans for objects in the given layermask and returns a ScanInfo result.
-    /// </summary>
-    /// <returns>A ScanInfo result.</returns>
-    public ScanInfo Scan (Vector3 direction, LayerMask mask) {
         if (Physics.Raycast(transform.position, direction, out RaycastHit hit, LookRange, mask)) {
             Debug.DrawLine(transform.position, hit.point, Color.red);
 
@@ -118,9 +112,9 @@ public class BattleBotInterface : MonoBehaviour {
                 hitType = HitType.Enemy;
             }
 
-            // Check if the gameobject we hit has a BattleBotInterface interface, if it does, it means we hit an enemy.
+            // Check if the gameobject we hit has a pickup component, if it does, it means we hit an itm.
             if (hit.collider.gameObject?.GetComponent<Pickup>() != null) {
-                hitType = HitType.Enemy;
+                hitType = HitType.Item;
             }
 
             return new ScanInfo(hit.collider.gameObject, hit.distance, hitType);
@@ -136,13 +130,13 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
-        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.Instance.MoveSpeed) * GameManager.Instance.MoveSpeed * Time.deltaTime);
+        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.instance.moveSpeed) * GameManager.instance.moveSpeed * Time.deltaTime);
     }
 
     /// <summary>
     /// Makes the BattleBot shoot in the given direction.
     /// </summary>
     public void Shoot(Vector3 direction) {
-        Weapon.Shoot(direction);
+        weapon.Shoot(direction);
     }
 }

@@ -5,12 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(OwnedObjectObserver))]
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager instance;
 
-    public float MaxLookDistance = 5f;
-    public float MoveSpeed = 1f;
-    public float MaxHealth = 100f;
-    public float MaxArmor = 100f;
+    public float maxLookDistance = 5f;
+    public float moveSpeed = 1f;
+    public float maxHealth = 100f;
+    public float maxArmor = 100f;
+    public float pickupRange = 1f;
 
     void Awake() {
         var managers = FindObjectsOfType<OwnedObjectObserver>();
@@ -19,7 +20,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Too many GameManager components present in scene.");
         }
         else {
-            Instance = this;
+            instance = this;
         }
     }
 }
