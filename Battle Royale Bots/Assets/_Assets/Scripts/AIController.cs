@@ -31,8 +31,8 @@ public class AIController : MonoBehaviour {
     public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
-    public float    Health     { get; private set; } = 100f;
-    public float    Armor      { get; private set; } = 0f;
+    public float    Health     { get; set; } = 100f;
+    public float    Armor      { get; set; } = 0f;
     public float    LookRange   => Mathf.Max(Weapon.Range, MaxLookDistance);
     public int      Ammo        => Weapon.Ammo;
 
