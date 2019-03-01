@@ -88,7 +88,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// <summary>
     /// Checks if the BattleBot has an item of type T
     /// </summary>
-    public T HasItem<T> () where T : Item {
+    public T FindItem<T> () where T : Item {
         return (T)Items.Find(x => x is T);
     }
 

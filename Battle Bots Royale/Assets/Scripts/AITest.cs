@@ -18,7 +18,7 @@ public class AITest : MonoBehaviour {
 
         Controller.Items.Add(OwnedObject.Instantiate<ItemMedkit>(gameObject));
 
-        Controller.UseItem(Controller.HasItem<ItemMedkit>());
+        Controller.UseItem(Controller.FindItem<ItemMedkit>());
     }
 
     void Update() {
