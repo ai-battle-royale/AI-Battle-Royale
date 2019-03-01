@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public float MaxLookDistance = 5f;
     public float MoveSpeed = 1f;
+    public float MaxHealth = 100f;
+    public float MaxArmor = 100f;
 
     void Awake() {
         var managers = FindObjectsOfType<OwnedObjectObserver>();

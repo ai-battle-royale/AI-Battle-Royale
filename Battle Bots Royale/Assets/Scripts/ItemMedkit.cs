@@ -7,6 +7,6 @@ public class ItemMedkit : Item {
     public override float ConsumptionTime => 3f;
 
     public override void OnUse() {
-        Controller.Health += 100 - Amount;
+        Controller.Health = Mathf.Min(Controller.Health + Amount, GameManager.Instance.MaxHealth);
     }
 }

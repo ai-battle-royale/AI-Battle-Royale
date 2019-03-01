@@ -28,8 +28,8 @@ public class BattleBotInterface : MonoBehaviour {
     public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
-    public float    Health     { get; set; } = 100f;
-    public float    Armor      { get; set; } = 0f;
+    public float    Health     { get; set; }
+    public float    Armor      { get; set; }
     public float    LookRange   => Mathf.Max(Weapon.Range, GameManager.Instance.MaxLookDistance);
     public int      Ammo        => Weapon.Ammo;
 
@@ -49,6 +49,8 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     void Start() {
+        Health = GameManager.Instance.MaxHealth;
+
         characterController = GetComponent<CharacterController>();
 
         Weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
