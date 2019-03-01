@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public abstract class Item : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject Owner;
+    public AIController Controller;
 
-    // Update is called once per frame
-    void Update() {
-        
+    public abstract float HealAmount { get; }
+    public abstract float ConsumptionTime { get; }
+
+    public static T Instantiate<T>(GameObject owner) where T : Item
+    {
+        var item = CreateInstance<T>();
+
+        item.Owner = owner;
+        item.Controller = owner.GetComponent<AIController>();
+
+        return item;
     }
 
     public void Use () {
-
+        Controller.Health = Controller.Health + HealAmount;
     }
 }
