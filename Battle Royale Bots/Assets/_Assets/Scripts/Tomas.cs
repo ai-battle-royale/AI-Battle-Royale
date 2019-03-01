@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Tomas : MonoBehaviour
 {
-    AIController Manager;
+    BattleBotInterface Manager;
     private Vector3 direction;
 
     // Start is called before the first frame update
     void Start()
     {
-        Manager = GetComponent<AIController>();
+        Manager = GetComponent<BattleBotInterface>();
         direction = new Vector3(Random.value, 0, Random.value);
     }
 
