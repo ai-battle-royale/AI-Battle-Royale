@@ -7,6 +7,6 @@ public class HealingItem : Item {
     public float Amount;
 
     public override void OnUse() {
-        controller.Health = Mathf.Min(controller.Health + Amount, GameManager.instance.maxHealth);
+        controller.health = Mathf.Min(controller.health + Amount, GameManager.instance.maxHealth);
     }
 }

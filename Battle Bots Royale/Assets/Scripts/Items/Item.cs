@@ -13,21 +13,25 @@ public abstract class Item : OwnedObject
     public override void OnUpdate () {
         if (IsBeingUsed) {
             if ((Time.time - useTime) >= ConsumptionTime) {
-                Debug.Log($"Used item {this}");
-
                 OnUse();
 
                 Destroy(this);
+
+                controller.items.Remove(this);
+
+                controller.IsUsingItem = false;
             }
         }
     }
 
     public void Cancel () {
         IsBeingUsed = false;
+        controller.IsUsingItem = false;
     }
 
     public void Use () {
         IsBeingUsed = true;
+        controller.IsUsingItem = true;
 
         useTime = Time.time;
     }
