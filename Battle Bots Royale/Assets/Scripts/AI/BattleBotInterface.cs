@@ -58,9 +58,12 @@ public class BattleBotInterface : MonoBehaviour {
 
     void Update() {
         // Set the name label position on the canvas.
-        labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0,50,0);
+        if (labelObject != null)
+        {
+            labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, 50, 0);
 
-        botLabel.SetSliders(Health / 100, Armor / 100);
+            botLabel.SetSliders(Health / 100, Armor / 100);
+        }
     }
 
     /// <summary>

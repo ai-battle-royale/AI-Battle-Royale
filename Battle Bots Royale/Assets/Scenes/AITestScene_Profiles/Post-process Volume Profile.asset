@@ -17,6 +17,7 @@ MonoBehaviour:
   - {fileID: 114163376059990678}
   - {fileID: 114223569266907986}
   - {fileID: 114016683782480712}
+  - {fileID: 114545342957989806}
 --- !u!114 &114016683782480712
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -40,17 +41,17 @@ MonoBehaviour:
     overrideState: 1
     value: {r: 0, g: 0, b: 0, a: 1}
   center:
-    overrideState: 1
+    overrideState: 0
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.084
+    value: 0.389
   smoothness:
-    overrideState: 0
-    value: 0.2
+    overrideState: 1
+    value: 0.282
   roundness:
-    overrideState: 0
-    value: 1
+    overrideState: 1
+    value: 0.945
   rounded:
     overrideState: 0
     value: 0
@@ -73,7 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adb84e30e02715445aeb9959894e3b4d, type: 3}
   m_Name: ColorGrading
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   enabled:
     overrideState: 1
     value: 1
@@ -114,7 +115,7 @@ MonoBehaviour:
     value: 1
   temperature:
     overrideState: 0
-    value: 0
+    value: 15
   tint:
     overrideState: 0
     value: 0
@@ -131,8 +132,8 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   postExposure:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 0.5
   contrast:
     overrideState: 0
     value: 0
@@ -1384,22 +1385,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 556797029e73b2347956b6579e77e05b, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   enabled:
     overrideState: 1
     value: 1
   focusDistance:
-    overrideState: 0
-    value: 10
+    overrideState: 1
+    value: 5
   aperture:
     overrideState: 0
-    value: 5.6
+    value: 4.7
   focalLength:
     overrideState: 0
     value: 50
   kernelSize:
-    overrideState: 0
+    overrideState: 1
+    value: 0
+--- !u!114 &114545342957989806
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b94fcd11afffcb142908bfcb1e261fba, type: 3}
+  m_Name: MotionBlur
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
     value: 1
+  shutterAngle:
+    overrideState: 0
+    value: 270
+  sampleCount:
+    overrideState: 0
+    value: 10
 --- !u!114 &114847454980562526
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1412,13 +1435,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   enabled:
     overrideState: 1
     value: 1
   intensity:
-    overrideState: 0
-    value: 0.36
+    overrideState: 1
+    value: 1
   threshold:
     overrideState: 0
     value: 1
