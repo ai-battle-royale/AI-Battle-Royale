@@ -2875,12 +2875,12 @@ PrefabInstance:
     - target: {fileID: 7741452161097686697, guid: c848b1bae0dc95a4baf90b05d16d3fc2,
         type: 3}
       propertyPath: explosionForce
-      value: 5000
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 7741452161097686697, guid: c848b1bae0dc95a4baf90b05d16d3fc2,
         type: 3}
       propertyPath: delay
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c848b1bae0dc95a4baf90b05d16d3fc2, type: 3}
