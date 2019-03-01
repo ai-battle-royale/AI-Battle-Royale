@@ -20,7 +20,5 @@ public abstract class Item : ScriptableObject
         return item;
     }
 
-    public void Use () {
-        Controller.Health = Controller.Health + HealAmount;
-    }
+    public abstract void Use();
 }
