@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Weapon : ScriptableObject {
+public abstract class Weapon : OwnedObject {
 
     public abstract AmmoType    AmmoType { get; } 
     public abstract float       Damage { get; }
@@ -12,8 +12,6 @@ public abstract class Weapon : ScriptableObject {
     public abstract float       Precision { get; }
 
     public int Ammo;
-    public GameObject Owner;
-    public BattleBotInterface Controller;
 
     private float lastFireTime;
 
@@ -22,18 +20,6 @@ public abstract class Weapon : ScriptableObject {
 
         // Ensure that the gun can fire when the game starts.
         lastFireTime = Time.time - FireDelay;
-    }
-
-    /// <summary>
-    /// Instantiates a weapon of type T with the given owner.
-    /// </summary>
-    public static T Instantiate<T>(GameObject owner) where T : Weapon {
-        var weapon = CreateInstance<T>();
-
-        weapon.Owner = owner;
-        weapon.Controller = owner.GetComponent<BattleBotInterface>();
-
-        return weapon;
     }
 
     /// <summary>

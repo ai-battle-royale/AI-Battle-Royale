@@ -2,23 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Item : ScriptableObject
+public abstract class Item : OwnedObject
 {
-    public GameObject Owner;
-    public BattleBotInterface Controller;
-
-    public abstract float Amount { get; }
     public abstract float ConsumptionTime { get; }
 
-    public static T Instantiate<T>(GameObject owner) where T : Item
-    {
-        var item = CreateInstance<T>();
+    public bool IsBeingUsed { get; private set; }
 
-        item.Owner = owner;
-        item.Controller = owner.GetComponent<BattleBotInterface>();
+    private float useTime;
 
-        return item;
+    public override void OnUpdate () {
+        if (IsBeingUsed) {
+            if ((Time.time - useTime) >= ConsumptionTime) {
+                Debug.Log($"Used item {this}");
+
+                OnUse();
+
+                Destroy(this);
+            }
+        }
     }
 
-    public abstract void Use();
+    public void Cancel () {
+        IsBeingUsed = false;
+    }
+
+    public void Use () {
+        IsBeingUsed = true;
+
+        useTime = Time.time;
+    }
+
+    public abstract void OnUse();
 }

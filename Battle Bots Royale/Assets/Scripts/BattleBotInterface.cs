@@ -23,20 +23,15 @@ public enum HitType {
 [RequireComponent(typeof(CharacterController))]
 public class BattleBotInterface : MonoBehaviour {
 
-    // These constants should be moved over to a game manager
-    [Header("Bot Stats (moving to a game manager)")]
-    public float MaxLookDistance = 5f;
-    public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
     [Header("Bot Inventory/Equipment")]
     public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
-    //[Header("Bot Stats")]
-    public float    Health     { get; set; } = 100f;
-    public float    Armor      { get; set; } = 0f;
-    public float    LookRange   => Mathf.Max(Weapon.Range, MaxLookDistance);
+    public float    Health     { get; set; }
+    public float    Armor      { get; set; }
+    public float    LookRange   => Mathf.Max(Weapon.Range, GameManager.Instance.MaxLookDistance);
     public int      Ammo        => Weapon.Ammo;
 
     private CharacterController characterController;
@@ -55,9 +50,13 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     void Start() {
+        Health = GameManager.Instance.MaxHealth;
+
         characterController = GetComponent<CharacterController>();
 
-        Weapon = Weapon.Instantiate<WeaponSMG>(gameObject);
+        Weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
+
+        DefaultLayerMask = LayerMask.NameToLayer("Everything");
 
         CreateLabel();
     }
@@ -93,7 +92,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// <summary>
     /// Checks if the BattleBot has an item of type T
     /// </summary>
-    public T HasItem<T> () where T : Item {
+    public T FindItem<T> () where T : Item {
         return (T)Items.Find(x => x is T);
     }
 
@@ -140,7 +139,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
-        characterController.Move(Vector3.ClampMagnitude(direction, MoveSpeed) * MoveSpeed * Time.deltaTime);
+        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.Instance.MoveSpeed) * GameManager.Instance.MoveSpeed * Time.deltaTime);
     }
 
     /// <summary>
