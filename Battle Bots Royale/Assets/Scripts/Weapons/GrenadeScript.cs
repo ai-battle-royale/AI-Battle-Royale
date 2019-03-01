@@ -6,6 +6,7 @@ public class GrenadeScript : MonoBehaviour
 {
     public float delay = 3f;
     public float radius = 5f;
+    public float explosionDuration = 2f;
     public float explosionForce = 500f;
     float countdown;
     bool hasExploded = false;
@@ -28,18 +29,37 @@ public class GrenadeScript : MonoBehaviour
     }
     void Explode()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, radius, 1 << 11);
 
         foreach (Collider nearbyObject in colliders)
         {
-            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
-            if (rb != null)
+            print(LayerMask.NameToLayer("Bot"));
+            Rigidbody rb = nearbyObject.gameObject.GetComponent<Rigidbody>();
+            CapsuleCollider collider = nearbyObject.gameObject.GetComponent<CapsuleCollider>();
+            if (collider == null)
             {
-                rb.AddExplosionForce(explosionForce, transform.position, radius);
-
+                collider = nearbyObject.gameObject.AddComponent<CapsuleCollider>();
             }
-        }
+            if (rb == null)
+            {
+                rb = nearbyObject.gameObject.AddComponent<Rigidbody>();
+                rb.freezeRotation = true;
+            }
+            nearbyObject.gameObject.GetComponent<CharacterController>().enabled = false;
 
-        Destroy(gameObject);
+            rb.AddExplosionForce(explosionForce, transform.position, radius);
+        }
+        StartCoroutine(ExplosionCleanUp(colliders));
+    }
+    IEnumerator ExplosionCleanUp(Collider[] colliders)
+    {
+        yield return new WaitForSeconds(explosionDuration);
+        foreach (Collider col in colliders)
+        {
+            Destroy(col.gameObject.GetComponent<Rigidbody>());
+            Destroy(col.gameObject.GetComponent<CapsuleCollider>());
+            col.gameObject.GetComponent<CharacterController>().enabled = true;
+        }
+        Destroy(gameObject); 
     }
 }
