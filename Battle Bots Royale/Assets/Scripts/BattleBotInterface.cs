@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public struct ScanInfo {
-    public GameObject gameobject;
+    public Pickup pickup;
     public float distance;
     public HitType type;
 
-    public ScanInfo (GameObject obj, float d, HitType t) {
-        gameobject = obj;
+    public ScanInfo (Pickup obj, float d, HitType t) {
+        pickup = obj;
         distance = d;
         type = t;
     }
@@ -96,6 +96,29 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     /// <summary>
+    /// Attempts to pickup the given pickup.
+    /// </summary>
+    public void Pickup(Pickup pickup) {
+        var direction = (pickup.transform.position - transform.position).normalized;
+        var debugLineColor = Color.magenta;
+        var debugLineEnd = transform.position + direction * GameManager.instance.pickupRange;
+
+        if (Physics.Raycast(transform.position + direction, direction, out RaycastHit hit, GameManager.instance.pickupRange)) {
+            debugLineEnd = hit.point;
+
+            if (hit.collider.gameObject == pickup.gameObject) {
+                pickup.OnInteract(this);
+
+                print($"Interacted with pickup {pickup}");
+
+                debugLineColor = Color.cyan;
+            }
+        }
+
+        Debug.DrawLine(transform.position, debugLineEnd, debugLineColor, 5f);
+    }
+
+    /// <summary>
     /// Scans for objects in the given layermask and returns a ScanInfo result.
     /// </summary>
     /// <returns>A ScanInfo result.</returns>
@@ -112,12 +135,14 @@ public class BattleBotInterface : MonoBehaviour {
                 hitType = HitType.Enemy;
             }
 
-            // Check if the gameobject we hit has a pickup component, if it does, it means we hit an itm.
+            // Check if the gameobject we hit has a pickup component, if it does, it means we hit an item.
+            var pickup = hit.collider.gameObject?.GetComponent<Pickup>();
+
             if (hit.collider.gameObject?.GetComponent<Pickup>() != null) {
                 hitType = HitType.Item;
             }
 
-            return new ScanInfo(hit.collider.gameObject, hit.distance, hitType);
+            return new ScanInfo(pickup, hit.distance, hitType);
         }
         else {
             Debug.DrawLine(transform.position, transform.position + direction * LookRange, Color.green);

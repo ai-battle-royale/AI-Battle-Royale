@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class OwnedObject : ScriptableObject
 {
-    public GameObject owner;
-    public BattleBotInterface controller;
+    [HideInInspector] public GameObject owner;
+    [HideInInspector] public BattleBotInterface controller;
 
     /// <summary>
     /// Instantiates an OwnedObject of type T with the given owner.

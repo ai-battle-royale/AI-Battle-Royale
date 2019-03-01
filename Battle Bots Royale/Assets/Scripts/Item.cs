@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Item : OwnedObject
 {
-    public abstract float ConsumptionTime { get; }
+    public float ConsumptionTime;
 
     public bool IsBeingUsed { get; private set; }
 
