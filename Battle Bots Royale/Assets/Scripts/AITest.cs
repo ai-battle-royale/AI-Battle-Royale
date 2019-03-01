@@ -16,9 +16,9 @@ public class AITest : MonoBehaviour {
 
         Controller.TakeDamage(75f);
 
-        Controller.Items.Add(OwnedObject.Instantiate<ItemMedkit>(gameObject));
+        Controller.items.Add(OwnedObject.Instantiate<HealingItem>(gameObject));
 
-        Controller.UseItem(Controller.FindItem<ItemMedkit>());
+        Controller.UseItem(Controller.FindItem<HealingItem>());
     }
 
     void Update() {
@@ -32,11 +32,11 @@ public class AITest : MonoBehaviour {
             var dir = new Vector3(Mathf.Cos(i + angleOffset), 0, Mathf.Sin(i + angleOffset));
             var scan = Controller.Scan(dir);
 
-            if (scan.Type == HitType.World) {
-                direction = Vector3.Slerp(direction, -dir, 1 - (scan.Distance / GameManager.Instance.MaxLookDistance) );
-            } else if (scan.Type == HitType.Enemy) {
+            if (scan.type == HitType.World) {
+                direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance) );
+            } else if (scan.type == HitType.Enemy) {
                 Controller.Shoot(dir);
-                direction = scan.Distance > 2f ? dir : -dir;
+                direction = scan.distance > 2f ? dir : -dir;
 
                 break;
             }

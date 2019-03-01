@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class OwnedObjectObserver : MonoBehaviour {
-    public static OwnedObjectObserver Instance;
+    public static OwnedObjectObserver instance;
 
-    public List<OwnedObject> Objects;
+    public List<OwnedObject> objects;
 
     void Awake () {
         var observers = FindObjectsOfType<OwnedObjectObserver>();
@@ -13,16 +13,18 @@ public class OwnedObjectObserver : MonoBehaviour {
         if (observers.Length > 1) {
             Debug.LogError("Too many OwnedObjectObserver components present in scene.");
         } else {
-            Instance = this;
+            instance = this;
         }
     }
 
     void Update () {
-        for (var i = 0; i < Objects.Count; i++) {
-            var obj = Objects[i];
+        for (var i = 0; i < objects.Count; i++) {
+            var obj = objects[i];
 
+            // Unity does not fully get rid of ScriptableObjects when doing Destroy()
+            // This means we have to remove them if manually
             if (obj == default(ScriptableObject)) {
-                Objects.Remove(obj);
+                objects.Remove(obj);
                 continue;
             }
 

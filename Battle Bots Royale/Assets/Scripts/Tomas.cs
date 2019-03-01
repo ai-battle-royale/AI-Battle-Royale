@@ -19,7 +19,7 @@ public class Tomas : MonoBehaviour
     {
         Manager.Scan(direction);
         var scanned = Manager.Scan(direction);
-        if (scanned.Type == HitType.World)
+        if (scanned.type == HitType.World)
         { 
             direction = new Vector3(Random.value, 0, Random.value);
         }

@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public struct ScanInfo {
-    public float Distance;
-    public HitType Type;
+    public Pickup pickup;
+    public float distance;
+    public HitType type;
 
-    public ScanInfo (float d, HitType t) {
-        Distance = d;
-        Type = t;
+    public ScanInfo (Pickup obj, float d, HitType t) {
+        pickup = obj;
+        distance = d;
+        type = t;
     }
 }
 
@@ -22,20 +24,15 @@ public enum HitType {
 
 [RequireComponent(typeof(CharacterController))]
 public class BattleBotInterface : MonoBehaviour {
-
-    public LayerMask DefaultLayerMask;
-
-    [Header("Bot Inventory/Equipment")]
-    public Weapon Weapon;
-    public List<Item> Items = new List<Item>();
+    public Weapon weapon;
+    public List<Item> items = new List<Item>();
 
     public float    Health     { get; set; }
     public float    Armor      { get; set; }
-    public float    LookRange   => Mathf.Max(Weapon.Range, GameManager.Instance.MaxLookDistance);
-    public int      Ammo        => Weapon.Ammo;
+    public float    LookRange   => Mathf.Max(weapon.Range, GameManager.instance.maxLookDistance);
+    public int      Ammo        => weapon.Ammo;
 
     private CharacterController characterController;
-    private bool canShoot = true;
     private RectTransform labelObject;
     private BotLabel botLabel;
 
@@ -50,13 +47,11 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     void Start() {
-        Health = GameManager.Instance.MaxHealth;
+        Health = GameManager.instance.maxHealth;
 
         characterController = GetComponent<CharacterController>();
 
-        Weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
-
-        DefaultLayerMask = LayerMask.NameToLayer("Everything");
+        weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
 
         CreateLabel();
     }
@@ -93,7 +88,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// Checks if the BattleBot has an item of type T
     /// </summary>
     public T FindItem<T> () where T : Item {
-        return (T)Items.Find(x => x is T);
+        return (T)items.Find(x => x is T);
     }
 
     /// <summary>
@@ -104,18 +99,35 @@ public class BattleBotInterface : MonoBehaviour {
     }
 
     /// <summary>
-    /// Scans for objects in the given layermask and returns a ScanInfo result.
+    /// Attempts to pickup the given pickup.
     /// </summary>
-    /// <returns>A ScanInfo result.</returns>
-    public ScanInfo Scan(Vector3 direction) {
-        return Scan(direction, DefaultLayerMask);
+    public void Pickup(Pickup pickup) {
+        var direction = (pickup.transform.position - transform.position).normalized;
+        var debugLineColor = Color.magenta;
+        var debugLineEnd = transform.position + direction * GameManager.instance.pickupRange;
+
+        if (Physics.Raycast(transform.position + direction, direction, out RaycastHit hit, GameManager.instance.pickupRange)) {
+            debugLineEnd = hit.point;
+
+            if (hit.collider.gameObject == pickup.gameObject) {
+                pickup.OnInteract(this);
+
+                print($"Interacted with pickup {pickup}");
+
+                debugLineColor = Color.cyan;
+            }
+        }
+
+        Debug.DrawLine(transform.position, debugLineEnd, debugLineColor, 5f);
     }
 
     /// <summary>
     /// Scans for objects in the given layermask and returns a ScanInfo result.
     /// </summary>
     /// <returns>A ScanInfo result.</returns>
-    public ScanInfo Scan (Vector3 direction, LayerMask mask) {
+    public ScanInfo Scan (Vector3 direction, LayerMask mask = default) {
+        if (mask == default) mask = LayerMask.NameToLayer("Everything");
+
         if (Physics.Raycast(transform.position, direction, out RaycastHit hit, LookRange, mask)) {
             Debug.DrawLine(transform.position, hit.point, Color.red);
 
@@ -126,12 +138,19 @@ public class BattleBotInterface : MonoBehaviour {
                 hitType = HitType.Enemy;
             }
 
-            return new ScanInfo(hit.distance, hitType);
+            // Check if the gameobject we hit has a pickup component, if it does, it means we hit an item.
+            var pickup = hit.collider.gameObject?.GetComponent<Pickup>();
+
+            if (hit.collider.gameObject?.GetComponent<Pickup>() != null) {
+                hitType = HitType.Item;
+            }
+
+            return new ScanInfo(pickup, hit.distance, hitType);
         }
         else {
             Debug.DrawLine(transform.position, transform.position + direction * LookRange, Color.green);
 
-            return new ScanInfo(LookRange, HitType.None);
+            return new ScanInfo(null, LookRange, HitType.None);
         }
     }
 
@@ -139,13 +158,13 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
-        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.Instance.MoveSpeed) * GameManager.Instance.MoveSpeed * Time.deltaTime);
+        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.instance.moveSpeed) * GameManager.instance.moveSpeed * Time.deltaTime);
     }
 
     /// <summary>
     /// Makes the BattleBot shoot in the given direction.
     /// </summary>
     public void Shoot(Vector3 direction) {
-        Weapon.Shoot(direction);
+        weapon.Shoot(direction);
     }
 }

@@ -11,7 +11,7 @@ public abstract class Weapon : OwnedObject {
     public abstract float       FireDelay { get; }
     public abstract float       Precision { get; }
 
-    public int Ammo;
+    public int Ammo { get; set;  }
 
     private float lastFireTime;
 
@@ -46,9 +46,9 @@ public abstract class Weapon : OwnedObject {
                 * Vector3.forward;                                          // Convert to vector
 
             var debugLineColor = Color.cyan;
-            var debugLineEnd = Owner.transform.position + direction * Range;
+            var debugLineEnd = owner.transform.position + direction * Range;
 
-            if (Physics.Raycast(Owner.transform.position + direction, direction, out RaycastHit hit, Range)) {
+            if (Physics.Raycast(owner.transform.position + direction, direction, out RaycastHit hit, Range)) {
                 debugLineEnd = hit.point;
 
                 var enemy = hit.collider.gameObject?.GetComponent<BattleBotInterface>();
@@ -60,7 +60,7 @@ public abstract class Weapon : OwnedObject {
                 }
             }
 
-            Debug.DrawLine(Owner.transform.position, debugLineEnd, debugLineColor, 5f);
+            Debug.DrawLine(owner.transform.position, debugLineEnd, debugLineColor, 5f);
 
             Ammo--;
         }

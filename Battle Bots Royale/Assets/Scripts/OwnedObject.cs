@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class OwnedObject : ScriptableObject
 {
-    public GameObject Owner;
-    public BattleBotInterface Controller;
+    [HideInInspector] public GameObject owner;
+    [HideInInspector] public BattleBotInterface controller;
 
     /// <summary>
     /// Instantiates an OwnedObject of type T with the given owner.
@@ -13,16 +13,16 @@ public abstract class OwnedObject : ScriptableObject
     public static T Instantiate<T>(GameObject owner) where T : OwnedObject {
         var obj = CreateInstance<T>();
 
-        obj.Owner = owner;
-        obj.Controller = owner.GetComponent<BattleBotInterface>();
+        obj.owner = owner;
+        obj.controller = owner.GetComponent<BattleBotInterface>();
 
-        OwnedObjectObserver.Instance.Objects.Add(obj);
+        OwnedObjectObserver.instance.objects.Add(obj);
 
         return obj;
     }
 
     public void StartCoroutine (IEnumerator method) {
-        OwnedObjectObserver.Instance.StartCoroutine(method);
+        OwnedObjectObserver.instance.StartCoroutine(method);
     }
 
     // Gets called every frame.
