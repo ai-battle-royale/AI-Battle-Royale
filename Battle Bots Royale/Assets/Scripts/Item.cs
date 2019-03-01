@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Item : ScriptableObject
 {
     public GameObject Owner;
-    public AIController Controller;
+    public BattleBotInterface Controller;
 
     public abstract float Amount { get; }
     public abstract float ConsumptionTime { get; }
@@ -15,10 +15,12 @@ public abstract class Item : ScriptableObject
         var item = CreateInstance<T>();
 
         item.Owner = owner;
-        item.Controller = owner.GetComponent<AIController>();
+        item.Controller = owner.GetComponent<BattleBotInterface>();
 
         return item;
     }
 
-    public abstract void Use();
+
+
+    private abstract void OnUse();
 }
