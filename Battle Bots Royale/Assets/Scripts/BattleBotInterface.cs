@@ -4,10 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public struct ScanInfo {
+    public GameObject Object;
     public float Distance;
     public HitType Type;
 
-    public ScanInfo (float d, HitType t) {
+    public ScanInfo (GameObject obj, float d, HitType t) {
+        Object = obj;
         Distance = d;
         Type = t;
     }
@@ -116,12 +118,17 @@ public class BattleBotInterface : MonoBehaviour {
                 hitType = HitType.Enemy;
             }
 
-            return new ScanInfo(hit.distance, hitType);
+            // Check if the gameobject we hit has a BattleBotInterface interface, if it does, it means we hit an enemy.
+            if (hit.collider.gameObject?.GetComponent<Pickup>() != null) {
+                hitType = HitType.Enemy;
+            }
+
+            return new ScanInfo(hit.collider.gameObject, hit.distance, hitType);
         }
         else {
             Debug.DrawLine(transform.position, transform.position + direction * LookRange, Color.green);
 
-            return new ScanInfo(LookRange, HitType.None);
+            return new ScanInfo(null, LookRange, HitType.None);
         }
     }
 
