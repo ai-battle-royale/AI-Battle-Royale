@@ -22,9 +22,6 @@ public enum HitType {
 
 [RequireComponent(typeof(CharacterController))]
 public class BattleBotInterface : MonoBehaviour {
-
-    public LayerMask DefaultLayerMask;
-
     public Weapon Weapon;
     public List<Item> Items = new List<Item>();
 
@@ -34,7 +31,6 @@ public class BattleBotInterface : MonoBehaviour {
     public int      Ammo        => Weapon.Ammo;
 
     private CharacterController characterController;
-    private bool canShoot = true;
     private RectTransform labelObject;
     private BotLabel botLabel;
 
@@ -54,8 +50,6 @@ public class BattleBotInterface : MonoBehaviour {
         characterController = GetComponent<CharacterController>();
 
         Weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
-
-        DefaultLayerMask = LayerMask.NameToLayer("Everything");
 
         CreateLabel();
     }
@@ -104,7 +98,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// </summary>
     /// <returns>A ScanInfo result.</returns>
     public ScanInfo Scan(Vector3 direction) {
-        return Scan(direction, DefaultLayerMask);
+        return Scan(direction, LayerMask.NameToLayer("Everything"));
     }
 
     /// <summary>
