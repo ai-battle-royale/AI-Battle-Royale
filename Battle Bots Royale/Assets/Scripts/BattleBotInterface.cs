@@ -23,9 +23,6 @@ public enum HitType {
 [RequireComponent(typeof(CharacterController))]
 public class BattleBotInterface : MonoBehaviour {
 
-    // These constants should be moved over to a game manager
-    public float MaxLookDistance = 5f;
-    public float MoveSpeed = 1f;
     public LayerMask DefaultLayerMask;
 
     public Weapon Weapon;
@@ -33,7 +30,7 @@ public class BattleBotInterface : MonoBehaviour {
 
     public float    Health     { get; set; } = 100f;
     public float    Armor      { get; set; } = 0f;
-    public float    LookRange   => Mathf.Max(Weapon.Range, MaxLookDistance);
+    public float    LookRange   => Mathf.Max(Weapon.Range, GameManager.Instance.MaxLookDistance);
     public int      Ammo        => Weapon.Ammo;
 
     private CharacterController characterController;
@@ -54,7 +51,9 @@ public class BattleBotInterface : MonoBehaviour {
     void Start() {
         characterController = GetComponent<CharacterController>();
 
-        Weapon = Weapon.Instantiate<WeaponSMG>(gameObject);
+        Weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
+
+        DefaultLayerMask = LayerMask.NameToLayer("Everything");
 
         CreateLabel();
     }
@@ -134,7 +133,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
-        characterController.Move(Vector3.ClampMagnitude(direction, MoveSpeed) * MoveSpeed * Time.deltaTime);
+        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.Instance.MoveSpeed) * GameManager.Instance.MoveSpeed * Time.deltaTime);
     }
 
     /// <summary>

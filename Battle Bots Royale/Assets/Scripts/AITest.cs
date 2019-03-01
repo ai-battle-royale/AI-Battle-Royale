@@ -13,6 +13,12 @@ public class AITest : MonoBehaviour {
         Controller = GetComponent<BattleBotInterface>();
 
         direction = new Vector3(Random.value, 0, Random.value);
+
+        Controller.TakeDamage(75f);
+
+        Controller.Items.Add(OwnedObject.Instantiate<ItemMedkit>(gameObject));
+
+        Controller.UseItem(Controller.HasItem<ItemMedkit>());
     }
 
     void Update() {
@@ -27,7 +33,7 @@ public class AITest : MonoBehaviour {
             var scan = Controller.Scan(dir);
 
             if (scan.Type == HitType.World) {
-                direction = Vector3.Slerp(direction, -dir, 1 - (scan.Distance / Controller.MaxLookDistance) );
+                direction = Vector3.Slerp(direction, -dir, 1 - (scan.Distance / GameManager.Instance.MaxLookDistance) );
             } else if (scan.Type == HitType.Enemy) {
                 Controller.Shoot(dir);
                 direction = scan.Distance > 2f ? dir : -dir;
