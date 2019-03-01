@@ -7,7 +7,7 @@ public abstract class Item : ScriptableObject
     public GameObject Owner;
     public AIController Controller;
 
-    public abstract float HealAmount { get; }
+    public abstract float Amount { get; }
     public abstract float ConsumptionTime { get; }
 
     public static T Instantiate<T>(GameObject owner) where T : Item
@@ -20,7 +20,6 @@ public abstract class Item : ScriptableObject
         return item;
     }
 
-    public void Use () {
-        Controller.Health = Controller.Health + HealAmount;
-    }
+    public abstract void Use();
+      
 }
