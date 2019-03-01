@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffe8f5788bc28554db591fd534a60d54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Objects: []
+  objects: []
 --- !u!114 &6936656330064893194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,7 +57,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98993051223c89645af58f3ecfeecc0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxLookDistance: 5
-  MoveSpeed: 3
-  MaxHealth: 100
-  MaxArmor: 100
+  defaultWeapon: {fileID: 11400000, guid: 1e03a31b2eef6d246b3a1cd5644f3829, type: 2}
+  maxLookDistance: 5
+  moveSpeed: 1
+  maxHealth: 100
+  maxArmor: 100
+  pickupRange: 1

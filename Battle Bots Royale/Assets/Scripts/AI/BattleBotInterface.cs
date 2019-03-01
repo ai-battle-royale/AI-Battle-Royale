@@ -29,7 +29,7 @@ public class BattleBotInterface : MonoBehaviour {
 
     public float    Health     { get; set; }
     public float    Armor      { get; set; }
-    public float    LookRange   => Mathf.Max(weapon.Range, GameManager.instance.maxLookDistance);
+    public float    LookRange   => Mathf.Max(weapon.range, GameManager.instance.maxLookDistance);
     public int      Ammo        => weapon.Ammo;
 
     private CharacterController characterController;
@@ -51,7 +51,7 @@ public class BattleBotInterface : MonoBehaviour {
 
         characterController = GetComponent<CharacterController>();
 
-        weapon = OwnedObject.Instantiate<WeaponSMG>(gameObject);
+        weapon = (Weapon)OwnedObject.Instantiate(GameManager.instance.defaultWeapon, gameObject);
 
         CreateLabel();
     }

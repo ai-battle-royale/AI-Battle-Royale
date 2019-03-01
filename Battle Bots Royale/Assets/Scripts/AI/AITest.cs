@@ -14,7 +14,7 @@ public class AITest : MonoBehaviour {
 
         direction = new Vector3(Random.value, 0, Random.value);
 
-        Controller.TakeDamage(75f);
+        //Controller.TakeDamage(75f);
 
         Controller.items.Add(OwnedObject.Instantiate<HealingItem>(gameObject));
 
@@ -37,6 +37,11 @@ public class AITest : MonoBehaviour {
             } else if (scan.type == HitType.Enemy) {
                 Controller.Shoot(dir);
                 direction = scan.distance > 2f ? dir : -dir;
+
+                break;
+            }
+            else if (scan.type == HitType.Item) {
+                var pickup = scan.pickup;
 
                 break;
             }

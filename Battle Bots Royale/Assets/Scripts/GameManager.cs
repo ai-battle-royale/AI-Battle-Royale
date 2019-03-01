@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public Weapon defaultWeapon;
     public float maxLookDistance = 5f;
     public float moveSpeed = 1f;
     public float maxHealth = 100f;

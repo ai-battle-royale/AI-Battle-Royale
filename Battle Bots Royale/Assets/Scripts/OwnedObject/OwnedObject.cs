@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,20 @@ public abstract class OwnedObject : ScriptableObject
     /// </summary>
     public static T Instantiate<T>(GameObject owner) where T : OwnedObject {
         var obj = CreateInstance<T>();
+
+        obj.owner = owner;
+        obj.controller = owner.GetComponent<BattleBotInterface>();
+
+        OwnedObjectObserver.instance.objects.Add(obj);
+
+        return obj;
+    }
+
+    /// <summary>
+    /// Copies an OwnedObject of the given type with the given owner.
+    /// </summary>
+    public static OwnedObject Instantiate(OwnedObject reference, GameObject owner) {
+        var obj = Instantiate(reference);
 
         obj.owner = owner;
         obj.controller = owner.GetComponent<BattleBotInterface>();
