@@ -46,7 +46,7 @@ public class GrenadeScript : MonoBehaviour
                 rb.freezeRotation = true;
             }
             nearbyObject.gameObject.GetComponent<CharacterController>().enabled = false;
-
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
             rb.AddExplosionForce(explosionForce, transform.position, radius);
         }
         StartCoroutine(ExplosionCleanUp(colliders));
