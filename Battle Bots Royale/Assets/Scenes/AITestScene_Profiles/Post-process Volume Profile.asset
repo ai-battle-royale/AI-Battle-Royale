@@ -20,8 +20,6 @@ MonoBehaviour:
   - {fileID: 114545342957989806}
   - {fileID: 114238097530148870}
   - {fileID: 114759055069985990}
-  - {fileID: 114030775233706474}
-  - {fileID: 114407918230779150}
 --- !u!114 &114016683782480712
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -49,16 +47,16 @@ MonoBehaviour:
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 1
+    value: 0.339
   smoothness:
     overrideState: 1
-    value: 1
+    value: 0.282
   roundness:
     overrideState: 1
-    value: 1
+    value: 0.945
   rounded:
-    overrideState: 1
-    value: 1
+    overrideState: 0
+    value: 0
   mask:
     overrideState: 0
     value: {fileID: 0}
@@ -83,8 +81,8 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   intensity:
-    overrideState: 1
-    value: 93
+    overrideState: 0
+    value: 0
   intensityX:
     overrideState: 0
     value: 1
@@ -98,8 +96,8 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   scale:
-    overrideState: 1
-    value: 0.52
+    overrideState: 0
+    value: 1
 --- !u!114 &114163376059990678
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1429,10 +1427,10 @@ MonoBehaviour:
     value: 0
   focusDistance:
     overrideState: 1
-    value: 47.11
+    value: 3.34
   aperture:
-    overrideState: 1
-    value: 21.5
+    overrideState: 0
+    value: 4.7
   focalLength:
     overrideState: 0
     value: 50
@@ -1533,11 +1531,11 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   shutterAngle:
-    overrideState: 1
-    value: 360
+    overrideState: 0
+    value: 270
   sampleCount:
     overrideState: 1
-    value: 12
+    value: 32
 --- !u!114 &114759055069985990
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1593,7 +1591,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 0.67
+    value: 1
   threshold:
     overrideState: 0
     value: 1
