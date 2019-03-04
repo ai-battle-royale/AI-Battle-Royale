@@ -7,6 +7,7 @@ TagManager:
   - Canvas
   - GameManager
   - Pickup
+  - Bot
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - GameManager
   - Pickup
   - Bot
-  - 
+  - Ground
   - 
   - 
   - 

@@ -31,7 +31,7 @@ public class AITest : MonoBehaviour {
             var scan = Controller.Scan(dir);
 
             if (scan.type == HitType.World) {
-                direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance) );
+                direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
             } else if (scan.type == HitType.Enemy) {
                 Controller.Shoot(dir);
                 direction = scan.distance > 2f ? dir : -dir;
@@ -55,7 +55,9 @@ public class AITest : MonoBehaviour {
             }
         }
 
-        if (Controller.health < 100) {
+        if (Controller.armor < 50) {
+            Controller.UseItem(Controller.FindItem<ArmorItem>());
+        } else if (Controller.health < 50) {
             Controller.UseItem(Controller.FindItem<HealingItem>());
         }
     }

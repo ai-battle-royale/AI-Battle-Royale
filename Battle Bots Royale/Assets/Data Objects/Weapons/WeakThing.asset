@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  name: 
+  name: Weak Thing
   ammoType: 0
-  damage: 5
-  range: 100
+  damage: 10
+  range: 5
   baseAmmo: 9999999
-  fireDelay: 1
-  precision: 0
+  fireDelay: 1.5
+  precision: 1

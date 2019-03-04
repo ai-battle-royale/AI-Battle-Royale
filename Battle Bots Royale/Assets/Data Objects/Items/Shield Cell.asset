@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: da58931901423ce4e980894dba8ab273, type: 3}
   m_Name: Shield Cell
-  m_EditorClassIdentifier: Assembly-CSharp::ArmorItem
+  m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  ConsumptionTime: 1
+  ConsumptionTime: 2
   Amount: 25

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  ConsumptionTime: 1
+  ConsumptionTime: 2
   Amount: 25
