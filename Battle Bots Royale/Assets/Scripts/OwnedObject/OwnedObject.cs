@@ -11,6 +11,9 @@ public abstract class OwnedObject : ScriptableObject
     void Awake () {
         Debug.Log($"{this} awoke");
 
+
+        if (!OwnedObjectObserver.instance) return;
+
         if (!OwnedObjectObserver.instance.objects.Contains(this))
             OwnedObjectObserver.instance.objects.Add(this);
     }

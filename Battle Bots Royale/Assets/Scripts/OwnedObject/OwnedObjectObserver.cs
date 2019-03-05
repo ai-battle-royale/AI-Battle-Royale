@@ -23,7 +23,7 @@ public class OwnedObjectObserver : MonoBehaviour {
 
             // Unity does not fully get rid of ScriptableObjects when doing Destroy()
             // This means we have to remove them if manually
-            if (obj == default(ScriptableObject)) {
+            if (!obj) {
                 objects.Remove(obj);
                 continue;
             }

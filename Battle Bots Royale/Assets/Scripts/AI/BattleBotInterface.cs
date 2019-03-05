@@ -22,20 +22,20 @@ public enum HitType {
     World
 }
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(RigidbodyController))]
 public class BattleBotInterface : MonoBehaviour {
     public Weapon weapon;
     public List<Item> items = new List<Item>();
 
     [ReadOnly] public float health;
     [ReadOnly] public float armor;
-    public float    LookRange   => Mathf.Max(weapon.range, GameManager.instance.maxLookDistance);
-    public int      Ammo        => weapon.Ammo;
-    public bool IsUsingItem;
+    public float            LookRange   => Mathf.Max(weapon.range, GameManager.instance.maxLookDistance);
+    public int              Ammo        => weapon.Ammo;
+    public bool             IsUsingItem;
+    public BotLabel botLabel;
 
-    private CharacterController characterController;
+    private RigidbodyController rigidbodyController;
     private RectTransform labelObject;
-    private BotLabel botLabel;
     private Item lastUsedItem;
 
     void CreateLabel () {
@@ -51,7 +51,7 @@ public class BattleBotInterface : MonoBehaviour {
     void Start() {
         health = GameManager.instance.maxHealth;
 
-        characterController = GetComponent<CharacterController>();
+        rigidbodyController = GetComponent<RigidbodyController>();
 
         weapon = (Weapon)OwnedObject.Instantiate(GameManager.instance.defaultWeapon, gameObject);
 
@@ -166,9 +166,13 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
-        if (IsUsingItem) return;
+        if (IsUsingItem)
+        {
+            rigidbodyController.Stop();
+            return;
+        }
 
-        characterController.Move(Vector3.ClampMagnitude(direction, GameManager.instance.moveSpeed) * GameManager.instance.moveSpeed * Time.deltaTime);
+        rigidbodyController.Move(direction);
     }
 
     /// <summary>
