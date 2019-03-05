@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 7545018561091642584, guid: dff0a0926fc6e2d46a96c6eadb608080,
         type: 3}
       propertyPath: m_Name
-      value: Armor Pickup
+      value: Armor Pickup Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7545018561091642585, guid: dff0a0926fc6e2d46a96c6eadb608080,
         type: 3}
@@ -72,5 +72,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 88f4c91f691ccab41a706c93fe2b4fb2,
         type: 2}
+    - target: {fileID: 7545018560782524976, guid: dff0a0926fc6e2d46a96c6eadb608080,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 558e40bc81d09354dba683f8a2cc6e05, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dff0a0926fc6e2d46a96c6eadb608080, type: 3}

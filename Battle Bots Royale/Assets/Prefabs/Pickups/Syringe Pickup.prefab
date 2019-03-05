@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 7545018561091642584, guid: dff0a0926fc6e2d46a96c6eadb608080,
         type: 3}
       propertyPath: m_Name
-      value: Small Health Pickup
+      value: Syringe Pickup
       objectReference: {fileID: 0}
     - target: {fileID: 7545018561091642584, guid: dff0a0926fc6e2d46a96c6eadb608080,
         type: 3}
@@ -77,5 +77,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 84ba2938cf6700b4d8feb01804f499fe,
         type: 2}
+    - target: {fileID: 7545018560782524978, guid: dff0a0926fc6e2d46a96c6eadb608080,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.30859977
+      objectReference: {fileID: 0}
+    - target: {fileID: 7545018560782524978, guid: dff0a0926fc6e2d46a96c6eadb608080,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.30859977
+      objectReference: {fileID: 0}
+    - target: {fileID: 7545018560782524978, guid: dff0a0926fc6e2d46a96c6eadb608080,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.30859977
+      objectReference: {fileID: 0}
+    - target: {fileID: 7545018560782524976, guid: dff0a0926fc6e2d46a96c6eadb608080,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4a4c3d3b584d6654aa51d27930704b55, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dff0a0926fc6e2d46a96c6eadb608080, type: 3}
