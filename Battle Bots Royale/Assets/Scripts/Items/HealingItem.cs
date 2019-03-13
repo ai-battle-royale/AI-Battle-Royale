@@ -6,7 +6,20 @@ using UnityEngine;
 public class HealingItem : Item {
     public float Amount;
 
-    public override void OnUse() {
-        controller.health = Mathf.Min(controller.health + Amount, GameManager.instance.maxHealth);
+    public override void OnUse()
+    {
+        controller.health = GetResultValue();
     }
+
+    public override void OnStartUse()
+    {
+        controller.botLabel.healthActionSlider.value = GetResultValue() / GameManager.instance.maxHealth;
+    }
+
+    public override void OnStopUse()
+    {
+        controller.botLabel.healthActionSlider.value = 0;
+    }
+
+    float GetResultValue() => Mathf.Min(controller.health + Amount, GameManager.instance.maxHealth);
 }

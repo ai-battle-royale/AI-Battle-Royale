@@ -55,9 +55,12 @@ public class AITest : MonoBehaviour {
             }
         }
 
-        if (Controller.armor < 50) {
+        if (Controller.armor < 50)
+        {
             Controller.UseItem(Controller.FindItem<ArmorItem>());
-        } else if (Controller.health < 50) {
+        }
+        else if (Controller.health < 50)
+        {
             Controller.UseItem(Controller.FindItem<HealingItem>());
         }
     }

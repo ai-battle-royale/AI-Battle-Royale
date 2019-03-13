@@ -5,16 +5,19 @@ using UnityEngine.UI;
 
 public class BotLabel : MonoBehaviour
 {
-    public Slider HealthSlider;
-    public Slider ArmorSlider;
-    public Text Text;
+    public Text     textObject;
+    public Slider   healthSlider;
+    public Slider   armorSlider;
+    public Slider   healthActionSlider;
+    public Slider   armorActionSlider;
+    public Slider   progressSlider;
 
     public void SetText (string text) {
-        Text.text = text;
+        textObject.text = text;
     }
 
     public void SetSliders(float health, float armor) {
-        ArmorSlider.value = armor;
-        HealthSlider.value = health;
+        armorSlider.value = armor;
+        healthSlider.value = health;
     }
 }

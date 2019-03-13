@@ -7,6 +7,19 @@ public class ArmorItem : Item {
     public float Amount;
 
     public override void OnUse() {
-        controller.armor = Mathf.Min(controller.armor + Amount, GameManager.instance.maxArmor);
+        controller.armor = GetResultValue();
     }
+
+    public override void OnStartUse()
+    {
+        controller.botLabel.armorActionSlider.value = GetResultValue() / GameManager.instance.maxArmor;
+    }
+
+    public override void OnStopUse()
+    {
+        controller.botLabel.armorActionSlider.value = 0;
+    }
+
+
+    float GetResultValue () => Mathf.Min(controller.armor + Amount, GameManager.instance.maxArmor);
 }
