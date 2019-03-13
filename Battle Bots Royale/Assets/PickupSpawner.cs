@@ -42,4 +42,10 @@ public class PickupSpawner : MonoBehaviour
         }
         yield return null;
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.gray;
+        Gizmos.DrawWireCube(new Vector3(spawnArea.center.x, 2.5f, spawnArea.center.y), new Vector3(spawnArea.size.x, 5, spawnArea.size.y));
+    }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/New Weapon")]
 public class Weapon : OwnedObject {
 
-    public string name;
     public AmmoType ammoType;
     public float damage;
     public float range;
