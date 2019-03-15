@@ -106,7 +106,12 @@ public class BattleBotInterface : MonoBehaviour {
             items.Remove(item);
 
             item.Use();
+            lastUsedItem = item;
         }
+    }
+
+    public void CancelUseItem () {
+        lastUsedItem?.Cancel();
     }
 
     /// <summary>

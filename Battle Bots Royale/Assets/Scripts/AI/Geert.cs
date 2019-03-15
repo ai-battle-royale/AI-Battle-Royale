@@ -30,7 +30,10 @@ public class Geert : MonoBehaviour
 
             if (scan.type == HitType.World)
             {
-                direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                if (scan.distance < 1)
+                {
+                    direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                }
             }
             else if (scan.type == HitType.Enemy)
             {

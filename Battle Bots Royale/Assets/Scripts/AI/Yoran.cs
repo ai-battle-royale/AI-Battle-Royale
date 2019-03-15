@@ -35,9 +35,16 @@ public class Yoran : MonoBehaviour {
             if (scan.type == HitType.World) {
 
                 // Move away from walls
-                direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                if (scan.distance < 3) {
+                    direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                }
             } else if (scan.type == HitType.Enemy) {
-                Controller.Shoot(dir);
+
+                if (Controller.IsUsingItem) {
+                    Controller.CancelUseItem();
+                }
+
+                Controller.Shoot(dir);             
 
                 /// Always try to stay weapon.range / 2 units away from the enemy.
                 direction = scan.distance > Controller.weapon.range / 2 ? dir : -dir;
@@ -71,12 +78,13 @@ public class Yoran : MonoBehaviour {
                     if (healthItemCount < 3 || armorItemCount < 3) {
                         tryToPickup = true;
                     }
+
                 } else {
                     tryToPickup = true;
                 }
 
                 // Don't pick up an item when there's an enemy nearby
-                tryToPickup = tryToPickup && isDangerous;
+                tryToPickup = tryToPickup && !isDangerous;
 
                 if (tryToPickup) {
                     direction = (pickupTarget.transform.position - transform.position).normalized;
