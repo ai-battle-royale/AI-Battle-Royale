@@ -45,17 +45,17 @@ public class Geert : MonoBehaviour
 
                 direction = (pickupTarget.transform.position - transform.position).normalized;
                 BotInterface.Pickup(pickupTarget.GetComponent<Pickup>());
-                if (BotInterface.health <= 75)
-                {
-                    BotInterface.UseItem(healingItem);
-                }
-                if (BotInterface.armor <= 75)
-                {
-                    BotInterface.UseItem(armorItem);
-                }
 
             }
 
+        }
+        if (BotInterface.health <= 75)
+        {
+            BotInterface.UseItem(healingItem);
+        }
+        if (BotInterface.armor <= 75)
+        {
+            BotInterface.UseItem(armorItem);
         }
         BotInterface.Move(direction);
 
