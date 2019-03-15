@@ -20,7 +20,23 @@ public class Geert : MonoBehaviour
         {
             var dir = new Vector3(Mathf.Cos(i), 0, Mathf.Sin(i));
             var scan = BBInterface.Scan(dir);
+
+            if (scan.type == HitType.World)
+            {
+
+            }
+            else if (scan.type == HitType.Enemy)
+            {
+                BBInterface.Shoot(dir);
+            }
+            else if (scan.type == HitType.Item)
+            {
+
+            }
+
         }
+
+
         BBInterface.Move(direction);
     }
 
