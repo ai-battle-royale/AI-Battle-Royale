@@ -17,7 +17,7 @@ MonoBehaviour:
   prefab: {fileID: 0}
   ammoType: 0
   damage: 20
-  range: 1.5
+  range: 3
   baseAmmo: 10000000
   fireDelay: 0.75
   precision: 0

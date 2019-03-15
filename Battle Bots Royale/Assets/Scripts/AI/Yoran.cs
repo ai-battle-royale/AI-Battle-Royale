@@ -35,9 +35,16 @@ public class Yoran : MonoBehaviour {
             if (scan.type == HitType.World) {
 
                 // Move away from walls
-                direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                if (scan.distance < 3) {
+                    direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                }
             } else if (scan.type == HitType.Enemy) {
-                Controller.Shoot(dir);
+
+                if (Controller.IsUsingItem) {
+                    Controller.CancelUseItem();
+                }
+
+                Controller.Shoot(dir);             
 
                 /// Always try to stay weapon.range / 2 units away from the enemy.
                 direction = scan.distance > Controller.weapon.range / 2 ? dir : -dir;

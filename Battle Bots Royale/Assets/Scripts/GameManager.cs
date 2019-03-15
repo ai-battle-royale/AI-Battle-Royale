@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public float maxHealth = 100f;
     public float maxArmor = 100f;
     public float pickupRange = 1f;
+    public float timeScale = 1f;
 
     void Awake() {
         var managers = FindObjectsOfType<OwnedObjectObserver>();
@@ -23,5 +24,9 @@ public class GameManager : MonoBehaviour
         else {
             instance = this;
         }
+    }
+
+    void Update () {
+        Time.timeScale = timeScale;
     }
 }
