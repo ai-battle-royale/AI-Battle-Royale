@@ -100,6 +100,8 @@ public class BattleBotInterface : MonoBehaviour {
     public void UseItem(Item item) {
         if (IsUsingItem) return;
 
+        if (item == null) return;
+
         if (items.Contains(item)) {
             items.Remove(item);
 
