@@ -609,7 +609,7 @@ Material:
     m_Colors:
     - Color_6FDCF4FB: {r: 1, g: 0, b: 0, a: 0}
     - Color_9BA1607A: {r: 0, g: 0.555069, b: 1, a: 0}
-    - _BaseColor: {r: 0.7075472, g: 0.4339537, b: 0.15018693, a: 1}
+    - _BaseColor: {r: 0.797, g: 0.49148327, b: 0.16825552, a: 1}
     - _BaseColor0: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor1: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor2: {r: 1, g: 1, b: 1, a: 1}
@@ -621,7 +621,7 @@ Material:
     - _CarPaint2_CTCoeffs: {r: 1, g: 1, b: 1, a: 1}
     - _CarPaint2_CTF0s: {r: 1, g: 1, b: 1, a: 1}
     - _CarPaint2_CTSpreads: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.7075471, g: 0.43395367, b: 0.1501869, a: 1}
+    - _Color: {r: 0.797, g: 0.49148315, b: 0.16825548, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
