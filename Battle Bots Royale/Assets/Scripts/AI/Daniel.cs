@@ -108,7 +108,7 @@ public class Daniel : MonoBehaviour
     [ReadOnly, SerializeField] bool shouldFlee;
     [ReadOnly, SerializeField] bool shouldMove;
 
-    float currentAngleOffset;
+    float currentAngleOffset = 0;
     
     void Start()
     {
@@ -216,10 +216,17 @@ public class Daniel : MonoBehaviour
         // Loop over all scan hits and prioritize
         foreach (var scanHit in scans)
         {
-            var direction = Vector3.zero;
+            var direction = currentDirection;
             if (scanHit.Type == HitType.World)
             {
-                direction = Vector3.Slerp(direction, -scanHit.Direction, 1 - (scanHit.Distance / GameManager.instance.maxLookDistance));
+                if (scanHit.Distance < 2)
+                {
+                    direction = Vector3.Slerp(-scanHit.Direction, currentDirection, (2f - scanHit.Distance) / 2f);
+                }
+                // FIXME apply priorities
+                currentDirection = direction;
+                shouldMove = true;
+                break;
             }
             else if (scanHit.Type == HitType.Enemy)
             {
@@ -233,12 +240,10 @@ public class Daniel : MonoBehaviour
                 direction = (pickupTarget.transform.position - transform.position).normalized;
                 pickupItem = true;
             }
-
-
-            // FIXME apply priorities
-            currentDirection = direction;
-            shouldMove = true;
-            break;
+            else
+            {
+                direction = transform.forward;
+            }
         }
 
         Loot();
@@ -258,13 +263,15 @@ public class Daniel : MonoBehaviour
     List<AdvancedScanInfo> ScanSurroundings()
     {
         // TODO apply "looking for" filters
-        var scans = new List<AdvancedScanInfo>();
         currentAngleOffset += 2 * Mathf.PI / rayStep;
         var angleStep = 2 * Mathf.PI / rayCount;
 
+        var scans = new List<AdvancedScanInfo>();
+        
+
         if (currentAngleOffset > angleStep)
         {
-            currentAngleOffset = angleStep;
+            currentAngleOffset = 0;
         }
 
         for (var i = 0f; i < Mathf.PI * 2; i += angleStep)
@@ -296,6 +303,11 @@ public class Daniel : MonoBehaviour
     }
 
     void Fight()
+    {
+
+    }
+
+    void Explore ()
     {
 
     }

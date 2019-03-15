@@ -58,7 +58,7 @@ public class PickupSpawner : MonoBehaviour
         while (true)
         {
             Vector3 spawnPoint = new Vector3(Random.Range(spawnArea.xMin, spawnArea.xMax), 1, Random.Range(spawnArea.yMin, spawnArea.yMax));
-            if (!Physics.SphereCast(spawnPoint, 1, Vector3.up, out RaycastHit hit, 0, LayerMask.NameToLayer("Ground")))
+            if (spawnpool.Length > 0 && !Physics.SphereCast(spawnPoint, 1, Vector3.up, out RaycastHit hit, 0, LayerMask.NameToLayer("Ground")))
             {
                 Instantiate(spawnpool[Random.Range(0, spawnpool.Length)], spawnPoint, Quaternion.identity, GameObject.Find("Pickups").transform);
                 break;
