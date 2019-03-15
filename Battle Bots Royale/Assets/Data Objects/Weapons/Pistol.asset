@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  prefab: {fileID: 0}
+  prefab: {fileID: 1697830817666819625, guid: 87e26222e76a2b64d9fa74d7a5943d2e, type: 3}
   ammoType: 0
   damage: 20
   range: 8
