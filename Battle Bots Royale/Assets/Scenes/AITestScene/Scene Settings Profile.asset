@@ -15,7 +15,7 @@ MonoBehaviour:
   components:
   - {fileID: 114994413620229350}
   - {fileID: 114033003679865102}
-  - {fileID: 114451807113596034}
+  - {fileID: 114428899262384742}
   - {fileID: 114267754222987464}
 --- !u!114 &114033003679865102
 MonoBehaviour:
@@ -84,7 +84,7 @@ MonoBehaviour:
   hdriSky:
     m_OverrideState: 1
     m_Value: {fileID: 8900000, guid: 1cde0e200e792cb4491204276a656490, type: 3}
---- !u!114 &114451807113596034
+--- !u!114 &114428899262384742
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   colorMode:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   color:
     m_OverrideState: 0
@@ -112,7 +112,7 @@ MonoBehaviour:
     min: 0
     max: 1
   maxFogDistance:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 5000
     min: 0
   mipFogMaxMip:
@@ -129,35 +129,35 @@ MonoBehaviour:
     m_Value: 1000
     min: 0
   albedo:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1
   meanFreePath:
     m_OverrideState: 1
-    m_Value: 22.59
+    m_Value: 50
     min: 1
   baseHeight:
     m_OverrideState: 1
-    m_Value: -8.17
+    m_Value: 0
   meanHeight:
     m_OverrideState: 1
-    m_Value: 6.6
+    m_Value: 50
     min: 1
   anisotropy:
-    m_OverrideState: 1
-    m_Value: -0.426
+    m_OverrideState: 0
+    m_Value: 0
     min: -1
     max: 1
   globalLightProbeDimmer:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
     min: 0
     max: 1
   enableDistantFog:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 0
 --- !u!114 &114994413620229350
 MonoBehaviour:
   m_ObjectHideFlags: 3
