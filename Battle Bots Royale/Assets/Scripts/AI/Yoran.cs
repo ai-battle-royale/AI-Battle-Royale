@@ -71,12 +71,13 @@ public class Yoran : MonoBehaviour {
                     if (healthItemCount < 3 || armorItemCount < 3) {
                         tryToPickup = true;
                     }
+
                 } else {
                     tryToPickup = true;
                 }
 
                 // Don't pick up an item when there's an enemy nearby
-                tryToPickup = tryToPickup && isDangerous;
+                tryToPickup = tryToPickup && !isDangerous;
 
                 if (tryToPickup) {
                     direction = (pickupTarget.transform.position - transform.position).normalized;
