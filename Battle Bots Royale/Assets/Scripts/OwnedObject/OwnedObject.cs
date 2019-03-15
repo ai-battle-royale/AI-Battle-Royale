@@ -9,7 +9,7 @@ public abstract class OwnedObject : ScriptableObject
     [HideInInspector] public BattleBotInterface controller;
 
     void Awake () {
-        Debug.Log($"{this} awoke");
+        //Debug.Log($"{this} awoke");
 
 
         if (!OwnedObjectObserver.instance) return;

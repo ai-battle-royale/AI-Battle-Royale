@@ -123,7 +123,7 @@ public class BattleBotInterface : MonoBehaviour {
             if (hit.collider.gameObject == pickup.gameObject) {
                 pickup.Interact(this);
 
-                print($"Interacted with pickup {pickup}");
+                //print($"Interacted with pickup {pickup}");
 
                 debugLineColor = Color.cyan;
             }
@@ -176,7 +176,9 @@ public class BattleBotInterface : MonoBehaviour {
         }
 
         rigidbodyController.Move(direction);
-        transform.rotation = Quaternion.LookRotation(Vector3.Scale(direction, new Vector3(1,0,1)), Vector3.up);
+        if (direction.magnitude > 0) { 
+            transform.rotation = Quaternion.LookRotation(Vector3.Scale(direction, new Vector3(1,0,1)), Vector3.up);
+        }
     }
 
     /// <summary>
