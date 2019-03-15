@@ -15,8 +15,6 @@ public class Yoran : MonoBehaviour {
         Controller = GetComponent<BattleBotInterface>();
 
         direction = new Vector3(Random.value, 0, Random.value);
-
-        //Controller.TakeDamage(75f);
     }
 
     void Update() {
@@ -55,13 +53,16 @@ public class Yoran : MonoBehaviour {
             }
         }
 
-        if (Controller.armor < 50)
+        var armorItem = Controller.FindItem<ArmorItem>();
+        var healthItem = Controller.FindItem<HealingItem>();
+
+        if (Controller.armor < 50 && armorItem != null)
         {
-            Controller.UseItem(Controller.FindItem<ArmorItem>());
+            Controller.UseItem(armorItem);
         }
-        else if (Controller.health < 50)
+        else if (Controller.health < 50 && healthItem != null)
         {
-            Controller.UseItem(Controller.FindItem<HealingItem>());
+            Controller.UseItem(healthItem);
         }
     }
 }
