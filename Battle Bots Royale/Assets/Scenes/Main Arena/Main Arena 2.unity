@@ -14253,7 +14253,7 @@ MonoBehaviour:
     height: 200
   spawnAtStart: 1
   itemAmount: 50
-  weaponAmount: 6
+  weaponAmount: 24
   spawnDuringGameplay: 0
   spawnInterval: 5
   spawnableItemPickups:

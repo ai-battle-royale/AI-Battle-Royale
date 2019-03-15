@@ -126,6 +126,12 @@ public class BattleBotInterface : MonoBehaviour {
             debugLineEnd = hit.point;
 
             if (hit.collider.gameObject == pickup.gameObject) {
+                if (pickup is PickupWeapon) {
+                    if (weapon.pickupPrefab != null) {
+                        StartCoroutine(CreatePickup(weapon.pickupPrefab, pickup.transform.position));
+                    }
+                }
+
                 pickup.Interact(this);
 
                 //print($"Interacted with pickup {pickup}");
@@ -168,6 +174,12 @@ public class BattleBotInterface : MonoBehaviour {
 
             return new ScanInfo(null, LookRange, HitType.None);
         }
+    }
+
+    IEnumerator CreatePickup (GameObject prefab, Vector3 position) {
+        yield return new WaitForSeconds(5);
+
+        Instantiate(prefab, position, Quaternion.identity);
     }
 
     /// <summary>

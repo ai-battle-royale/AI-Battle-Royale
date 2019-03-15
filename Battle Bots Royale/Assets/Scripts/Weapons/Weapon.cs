@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/New Weapon")]
 public class Weapon : OwnedObject {
 
+    public string name;
+    public GameObject pickupPrefab;
     public GameObject prefab;
     public AmmoType ammoType;
     public float damage;
@@ -12,6 +14,7 @@ public class Weapon : OwnedObject {
     public int baseAmmo;
     public float fireDelay;
     public float precision;
+    [HideInInspector] public GameObject prefabInstance;
 
     public int Ammo { get; set;  }
 

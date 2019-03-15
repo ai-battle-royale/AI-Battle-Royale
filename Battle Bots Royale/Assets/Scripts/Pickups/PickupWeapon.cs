@@ -12,10 +12,14 @@ public class PickupWeapon : Pickup {
     public override void OnInteract(BattleBotInterface bot) {
         var oldWeapon = bot.weapon;
 
+        var instance = Instantiate(weapon.prefab, bot.weaponHolder);
+        instance.transform.localPosition = Vector3.zero;
+
         bot.weapon = weapon;
         bot.weapon.controller = bot;
         bot.weapon.owner = bot.gameObject;
-        var instance = Instantiate(weapon.prefab, bot.weaponHolder);
-        instance.transform.localPosition = Vector3.zero;
+        bot.weapon.prefabInstance = instance;
+
+        Destroy(oldWeapon.prefabInstance);
     }
 }

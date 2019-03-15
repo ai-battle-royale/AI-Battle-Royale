@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
+  name: rifle
+  pickupPrefab: {fileID: 8078452474799672849, guid: 4c202a17716cd644c8fca32ecceef5f7,
+    type: 3}
   prefab: {fileID: 7348196546407126505, guid: 30d4d09fc2c080a46bd960aad30f2807, type: 3}
   ammoType: 0
   damage: 4
@@ -21,3 +24,4 @@ MonoBehaviour:
   baseAmmo: 1000
   fireDelay: 0.33
   precision: 2
+  prefabInstance: {fileID: 0}
