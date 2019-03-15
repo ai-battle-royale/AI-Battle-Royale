@@ -15,9 +15,7 @@ public class PickupWeapon : Pickup {
         bot.weapon = weapon;
         bot.weapon.controller = bot;
         bot.weapon.owner = bot.gameObject;
-
-        weapon = oldWeapon;
-        weapon.controller = null;
-        weapon.owner = null;
+        var instance = Instantiate(weapon.prefab, bot.weaponHolder);
+        instance.transform.localPosition = Vector3.zero;
     }
 }

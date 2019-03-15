@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/New Weapon")]
 public class Weapon : OwnedObject {
 
+    public GameObject prefab;
     public AmmoType ammoType;
     public float damage;
     public float range;

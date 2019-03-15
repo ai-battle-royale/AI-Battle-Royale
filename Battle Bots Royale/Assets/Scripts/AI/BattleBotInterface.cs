@@ -25,6 +25,7 @@ public enum HitType {
 [RequireComponent(typeof(RigidbodyController))]
 public class BattleBotInterface : MonoBehaviour {
     public Weapon weapon;
+    public Transform weaponHolder;
     public List<Item> items = new List<Item>();
 
     [ReadOnly] public float health;
@@ -173,6 +174,7 @@ public class BattleBotInterface : MonoBehaviour {
         }
 
         rigidbodyController.Move(direction);
+        transform.rotation = Quaternion.LookRotation(Vector3.Scale(direction, new Vector3(1,0,1)), Vector3.up);
     }
 
     /// <summary>

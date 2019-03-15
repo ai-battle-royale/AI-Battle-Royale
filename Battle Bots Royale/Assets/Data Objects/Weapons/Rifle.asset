@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a0547baac4836642a4405354775c111, type: 3}
+  m_Name: Rifle
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  controller: {fileID: 0}
+  prefab: {fileID: 7348196546407126505, guid: 30d4d09fc2c080a46bd960aad30f2807, type: 3}
+  ammoType: 0
+  damage: 50
+  range: 1000
+  baseAmmo: 1000
+  fireDelay: 0.1
+  precision: 1

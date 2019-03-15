@@ -6,7 +6,7 @@ public abstract class Pickup : MonoBehaviour {
 
     public void Interact (BattleBotInterface bot) {
         OnInteract(bot);
-
+        
         Destroy(gameObject);
     }
 

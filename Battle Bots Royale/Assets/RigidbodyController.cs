@@ -9,7 +9,7 @@ public class RigidbodyController : MonoBehaviour
     public float smoothing = 0.5f;
     private Rigidbody rb;
     private Vector3 desiredMoveVector;
-    private Vector3 velocity;
+    public Vector3 velocity;
 
     // Start is called before the first frame update
     void Start()

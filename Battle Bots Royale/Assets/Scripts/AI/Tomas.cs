@@ -40,6 +40,7 @@ public class Tomas : MonoBehaviour
                 pickupTarget = scan.pickup;
 
                 direction = (pickupTarget.transform.position - transform.position).normalized;
+                Manager.Pickup(pickupTarget.GetComponent<Pickup>());
 
             }
         }
