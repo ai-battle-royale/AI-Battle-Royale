@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AITest : MonoBehaviour {
+public class Yoran : MonoBehaviour {
 
     bool canSeeEnemy;
     Vector3 direction;
