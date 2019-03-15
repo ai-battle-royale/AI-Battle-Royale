@@ -5,38 +5,62 @@ using UnityEngine;
 public class PickupSpawner : MonoBehaviour
 {
     public Rect spawnArea;
+
+    public bool spawnAtStart = true;
+    public int itemAmount = 50;
+    public int weaponAmount = 6;
+
+    public bool spawnDuringGameplay = false;
     public float spawnInterval = 5;
 
-    public GameObject[] spawnablePickups;
+    public GameObject[] spawnableItemPickups;
+    public GameObject[] spawnableWeaponPickups;
 
     float elapsedTime = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (elapsedTime >= spawnInterval)
+        // Spawn specified amount of items at start
+        if (spawnAtStart)
         {
-            elapsedTime = 0;
-            StartCoroutine(SpawnPickup());
+            for (int i = 0; i < itemAmount; i++)
+            {
+                StartCoroutine(SpawnPickup(spawnableItemPickups));
+            }
+            for (int i = 0; i < weaponAmount; i++)
+            {
+                StartCoroutine(SpawnPickup(spawnableWeaponPickups));
+            }
         }
 
-        elapsedTime += Time.deltaTime;
+        // Start spawning coroutine to spawn more itmes during gameplay
+        if (spawnDuringGameplay)
+            StartCoroutine(ItemSpawner());
     }
 
-    private IEnumerator SpawnPickup()
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
+    private IEnumerator ItemSpawner()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(spawnInterval);
+            StartCoroutine(SpawnPickup(spawnableItemPickups));
+        }
+    }
+
+    private IEnumerator SpawnPickup(GameObject[] spawnpool)
     {
         while (true)
         {
             Vector3 spawnPoint = new Vector3(Random.Range(spawnArea.xMin, spawnArea.xMax), 1, Random.Range(spawnArea.yMin, spawnArea.yMax));
             if (!Physics.SphereCast(spawnPoint, 1, Vector3.up, out RaycastHit hit, 0, LayerMask.NameToLayer("Ground")))
             {
-                Instantiate(spawnablePickups[Random.Range(0, spawnablePickups.Length)], spawnPoint, Quaternion.identity, GameObject.Find("Pickups").transform);
+                Instantiate(spawnpool[Random.Range(0, spawnpool.Length)], spawnPoint, Quaternion.identity, GameObject.Find("Pickups").transform);
                 break;
             }
         }
