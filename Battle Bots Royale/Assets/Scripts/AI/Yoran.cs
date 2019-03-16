@@ -11,6 +11,12 @@ public class Yoran : MonoBehaviour {
     bool isPickingUpItem = false;
     Pickup pickupTarget;
 
+    Dictionary<string, int> weaponWeights = new Dictionary<string, int> {
+        {"rifle", 5},
+        {"pistol", 4},
+        {"fists", 0}
+    };
+
     void Start()  {
         Controller = GetComponent<BattleBotInterface>();
 
@@ -79,8 +85,10 @@ public class Yoran : MonoBehaviour {
                         tryToPickup = true;
                     }
 
-                } else {
-                    tryToPickup = true;
+                } else if (pickupTarget is PickupWeapon pickupWeapon) {
+                    if (weaponWeights.ContainsKey(pickupWeapon.weapon.name) && (weaponWeights[pickupWeapon.weapon.name] > weaponWeights[Controller.weapon.name])) {
+                        tryToPickup = true;
+                    }
                 }
 
                 // Don't pick up an item when there's an enemy nearby

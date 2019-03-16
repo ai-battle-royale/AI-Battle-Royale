@@ -128,7 +128,8 @@ public class BattleBotInterface : MonoBehaviour {
             if (hit.collider.gameObject == pickup.gameObject) {
                 if (pickup is PickupWeapon) {
                     if (weapon.pickupPrefab != null) {
-                        StartCoroutine(CreatePickup(weapon.pickupPrefab, pickup.transform.position));
+                        //StartCoroutine(CreatePickup(weapon.pickupPrefab, pickup.transform.position));
+                        Instantiate(weapon.pickupPrefab, pickup.transform.position, Quaternion.identity);
                     }
                 }
 
