@@ -37,8 +37,11 @@ public class Geert : MonoBehaviour
             }
             else if (scan.type == HitType.Enemy)
             {
+
                 BotInterface.Shoot(dir);
-                direction = scan.distance > 2f ? dir : -dir;
+                direction = scan.distance > 1f ? dir : -dir;
+
+
 
                 break;
             }
@@ -63,11 +66,11 @@ public class Geert : MonoBehaviour
             }
 
         }
-        if (BotInterface.health <= 75)
+        if (BotInterface.health <= 50)
         {
             BotInterface.UseItem(healingItem);
         }
-        if (BotInterface.armor <= 75)
+        if (BotInterface.armor <= 50)
         {
             BotInterface.UseItem(armorItem);
         }
