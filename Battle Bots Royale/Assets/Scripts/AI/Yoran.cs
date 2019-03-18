@@ -86,7 +86,7 @@ public class Yoran : MonoBehaviour {
                     }
 
                 } else if (pickupTarget is PickupWeapon pickupWeapon) {
-                    if (weaponWeights.ContainsKey(pickupWeapon.weapon.name) && (weaponWeights[pickupWeapon.weapon.name] > weaponWeights[Controller.weapon.name])) {
+                    if (weaponWeights.ContainsKey(pickupWeapon.weapon.name) && (weaponWeights[pickupWeapon.weapon.name] > weaponWeights[Controller.weapon.name])) { 
                         tryToPickup = true;
                     }
                 }

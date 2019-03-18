@@ -18,7 +18,7 @@ MonoBehaviour:
   pickupPrefab: {fileID: 0}
   prefab: {fileID: 0}
   ammoType: 0
-  damage: 20
+  damage: 15
   range: 3
   baseAmmo: 10000000
   fireDelay: 0.75
