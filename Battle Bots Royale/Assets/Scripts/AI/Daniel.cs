@@ -161,11 +161,14 @@ public class Daniel : MonoBehaviour
     [SerializeField] private int minAmountHealItems     = 2;
     [SerializeField] private int minAmountArmorItems    = 2;
 
+    [Header("Movement")]
+    [SerializeField] private float maxDistanceToNextRing = 75f;
+    [SerializeField] private float maxDistanceOutsideOfRing = 10f;
 
-    [Header("Priorities")]
+    [Header("Prioritiy Bonuses")]
     [SerializeField] private int desirePriorityBonus = 1;
     [SerializeField] private int urgePriorityBonus = 5;
-    [SerializeField] private int threshHoldBonus = 6;
+    [SerializeField] private int ThresholdBonus = 6;
 
     [Header("-----------------")]
     [Header("Brain Information")]
@@ -176,16 +179,16 @@ public class Daniel : MonoBehaviour
     [Header("Actions")]
     [ReadOnly, SerializeField] Vector3 currentDirection;
     [ReadOnly, SerializeField] bool avoidObstacle;
-    [ReadOnly, SerializeField] Pickup pickupTarget;
-    [ReadOnly, SerializeField] bool shouldPickupItem;
+    [ReadOnly, SerializeField] List<Pickup> pickupTargets;
+    [ReadOnly, SerializeField] bool lootSurroundings;
 
     [Header("Stats")]
     [ReadOnly, SerializeField] int kills;
     [ReadOnly, SerializeField] int totalDamageTaken;
     [ReadOnly, SerializeField] int totalDamageDealt;
+    [ReadOnly, SerializeField] private Weapon defaultWeapon;
 
     [Header("Priorities")]
-    [ReadOnly, SerializeField] Dictionary<PriorityType, int> priorities;
     [ReadOnly, SerializeField] int weaponPriority;
     [ReadOnly, SerializeField] int fightPriority;
     [ReadOnly, SerializeField] int healPriority;
@@ -193,12 +196,14 @@ public class Daniel : MonoBehaviour
     [ReadOnly, SerializeField] int fleePriority;
     [ReadOnly, SerializeField] int explorePriority;
     [ReadOnly, SerializeField] int centerPriority;
+    [ReadOnly, SerializeField] Dictionary<PriorityType, int> priorities;
 
     [Header("Sensors")]
     [ReadOnly, SerializeField] bool canSeeEnemy;
     [ReadOnly, SerializeField] bool canSeeItem;
     [ReadOnly, SerializeField] bool canSeeWeapon;
     [ReadOnly, SerializeField] bool movingTowardsObstacle;
+    [ReadOnly, SerializeField] private float currentAngleOffset = 0;
 
     [Header("Memory")]
     [ReadOnly, SerializeField] List<EnemyInfo>      enemyBots;     // Needs health/dmg tracking & player assosiation
@@ -219,8 +224,6 @@ public class Daniel : MonoBehaviour
     [ReadOnly, SerializeField] bool shouldFlee;
     [ReadOnly, SerializeField] bool shouldExplore;
     [ReadOnly, SerializeField] bool shouldCenter;
-
-    private float currentAngleOffset = 0;
     
     void Start()
     {
@@ -235,13 +238,13 @@ public class Daniel : MonoBehaviour
 
     void ResetBrain()
     {
-        desiredDirection = Vector3.zero;
+        desiredDirection    = Vector3.zero;
 
-        avoidObstacle = false;
-        currentDirection = Vector3.zero;
+        avoidObstacle       = false;
+        currentDirection    = Vector3.zero;
 
-        pickupTarget = null;
-        shouldPickupItem      = false;
+        pickupTargets       = new List<Pickup>();
+        lootSurroundings    = false;
 
         kills               = 0;
         totalDamageTaken    = 0;
@@ -281,6 +284,7 @@ public class Daniel : MonoBehaviour
         }
     }
 
+    #region Action prioritization
     void RebuildPriorities()
     {
         weaponPriority  = 0;
@@ -295,7 +299,7 @@ public class Daniel : MonoBehaviour
 
         ApplyDesirePriorities();
         ApplyUrgePriorities();
-        ApplyThreshholdDesires();
+        ApplyThresholdDesires();
 
         priorities = new Dictionary<PriorityType, int>()
         {
@@ -313,7 +317,6 @@ public class Daniel : MonoBehaviour
             { PriorityType.Center,  centerPriority  }
         };
     }
-
     void ApplyDesirePriorities()
     {
         // Set the base priorities
@@ -323,9 +326,9 @@ public class Daniel : MonoBehaviour
             // Fight with enough items
             // Flee when in danger
             case Focus.Loot:
-                weaponPriority += desirePriorityBonus * 2;
-                healPriority += desirePriorityBonus * 2;
-                armorPriority += desirePriorityBonus * 2;
+                weaponPriority += desirePriorityBonus;
+                healPriority += desirePriorityBonus;
+                armorPriority += desirePriorityBonus;
                 //fightPriority   = 0;
                 //fleePriority    = 0;
                 explorePriority += desirePriorityBonus;
@@ -341,7 +344,7 @@ public class Daniel : MonoBehaviour
                 weaponPriority += desirePriorityBonus;
                 //healPriority    = 0;
                 armorPriority += desirePriorityBonus;
-                fightPriority += desirePriorityBonus * 2;
+                fightPriority += desirePriorityBonus;
                 //fleePriority    = 0;
                 explorePriority += desirePriorityBonus;
                 //centerPriority  = 0;
@@ -354,7 +357,7 @@ public class Daniel : MonoBehaviour
                 healPriority += desirePriorityBonus;
                 armorPriority += desirePriorityBonus;
                 //fightPriority   = 0;
-                fleePriority += desirePriorityBonus * 2;
+                fleePriority += desirePriorityBonus;
                 //explorePriority = 0;
                 centerPriority += desirePriorityBonus;
                 break;
@@ -391,76 +394,99 @@ public class Daniel : MonoBehaviour
             centerPriority  += urgePriorityBonus;
         }
     }
-    void ApplyThreshholdDesires()
+    void ApplyThresholdDesires()
     {
-        if (CheckHealth())
+        if (CheckHealthThreshold())
         {
-            healPriority += threshHoldBonus;
+            healPriority += ThresholdBonus;
         }
-        if (CheckArmor())
+        if (CheckArmorThreshold())
         {
-            armorPriority += threshHoldBonus;
+            armorPriority += ThresholdBonus;
         }
     }
+    #endregion
 
-    void CheckSelf()
+    #region Checking for urges
+    void CheckUrges()
     {
-        lookingForWeapon    = CheckEquippedWeapon();
+        lookingForWeapon    = !CheckForEquippedWeapon();
         lookingForHealth    = CheckHeldHealItems();
         lookingForArmor     = CheckHeldArmorItems();
 
+        //TODO - Add damage check to see if under attack
         if (!lookingForWeapon && !lookingForHealth && !lookingForArmor)
         {
-            shouldFight = true;
-            shouldCenter = true;
+            shouldFight     = true;
+            shouldFlee      = false;
+        }
+        else
+        {
+            shouldFight     = false;
+            shouldFlee      = true;
+        }
+
+        if (CheckInsideRingDistanceTreshold())
+        {
+            shouldExplore   = true;
+            shouldCenter    = false;
+        }
+        else
+        {
+            shouldExplore   = false;
+            shouldCenter    = true;
         }
     }
+    bool CheckInsideRingDistanceTreshold()
+    {
+        var distanceToRingCenter = Vector3.Distance(transform.position, bot.RingCenter);
+        var distanceToNextRingCenter = Vector3.Distance(transform.position, bot.NextRingCenter);
+        /*print($"Current distance to ring: {distanceToRingCenter-maxDistanceOutsideOfRing} vs {bot.RingRadius}" +
+            $"\n| Distance to next ring: {distanceToNextRingCenter-maxDistanceToNextRing} vs {bot.NextRingRadius}");
+            */
+        var isInRingThreshold = distanceToRingCenter - maxDistanceOutsideOfRing < bot.RingRadius;
+        var isInNextRingThreshold = distanceToNextRingCenter - maxDistanceToNextRing < bot.NextRingRadius;
 
+        return (bot.IsInRing || isInRingThreshold) && (bot.IsInNextRing || isInNextRingThreshold);
+    }
     bool CheckHeldHealItems()
     {
         return CountHealingItems() < minAmountHealItems;
     }
-
     bool CheckHeldArmorItems()
     {
         return CountArmorItems() < minAmountArmorItems;
     }
-
-    bool CheckEquippedWeapon()
+    bool CheckForEquippedWeapon()
     {
-        return bot.weapon == null;
+        if (defaultWeapon == null)
+            defaultWeapon = bot.weapon;
+
+        return bot.weapon != null && bot.weapon != defaultWeapon;
     }
-
-    void UpdateBrainState()
-    {
-        CheckSelf();
-
-        // Check for priorities to update brain state
-        desiredDirection = transform.forward;
-
-
-        RebuildPriorities();
-    }
-
-    void UpdateBotBehaviour()
-    {
-        // Set behaviour base on brain state
-    }
+    #endregion
 
     void Update()
     {
         // Update behaviour base on desires, surroundings and self
         UpdateBrainState();
-        UpdateBotBehaviour();
 
         // Create a list of pickups, enemies and possible obstacles
-        var scans = ScanSurroundings(); // LayerMask.GetMask("Bot", "Pickup"));
-
-        // Loop over all scan results and remember them
-        AssignScanResults(scans);
+        //  and loop over all scan results and remember them
+        AssignScanResults(ScanSurroundings());// LayerMask.GetMask("Bot", "Pickup")));
 
         // Act upon brain and memory
         TakeAction();
+    }
+
+    void UpdateBrainState()
+    {
+        CheckUrges();
+
+        // Check for priorities to update brain state
+        desiredDirection = transform.forward;
+
+        RebuildPriorities();
     }
 
     List<AdvancedScanInfo> ScanSurroundings(LayerMask layerMask = default)
@@ -514,6 +540,7 @@ public class Daniel : MonoBehaviour
     void AddObstacleInfo(AdvancedScanInfo obstacle)
     {
         // Check if obstacle is in the way of the desired direction
+        // TODO - Use bots collider diameter to check if it can fit in between two obstacles at any distance
         var obstacleInfo = new ObstacleInfo(transform.position + obstacle.Direction * obstacle.Distance,
             obstacle.Distance);
         if (AreObstaclesBlockingDesiredDirection(obstacle.Direction, obstacle.Distance))
@@ -544,10 +571,9 @@ public class Daniel : MonoBehaviour
         enemyBots.Add(enemyInfo);
         canSeeEnemy = true;
 
-        // TODO - prediction
+        // TODO - prediction like a check for vicinty (has the bot move from last known location)
         if (checkAgainstMemory)
         {
-            //TODO - Check for vicinty (has the bot move from last known location)
             enemyInfo = new EnemyInfo();
         }
         if (remember) lastKnowEnemyBots.Add(enemyInfo);
@@ -577,20 +603,16 @@ public class Daniel : MonoBehaviour
         {
             case PickupType.Weapon:
 
-                weaponPickupInfos.Add(pickupInfo);
-                canSeeWeapon = true;
-
-                // Check to find if the weapon already exists in memory
-                if (checkAgainstMemory && lastKnowWeaponPickups?.Count > 0)
+                // Add weapon to direct vision if not already seen to avoid duplicate vision
+                if (weaponPickupInfos?.Find(x => x.Pickup == pickupInfo.Pickup) == null)
                 {
-                    var memorizedInfo = lastKnowWeaponPickups?.Find(x => x.Pickup == pickupInfo.Pickup);
-                    //print($"Trying to remember {pickupInfo.Pickup.name}: {memorizedInfo?.Pickup?.name}");
-
-                    if (memorizedInfo != null)
-                    {
-                        print("Updating memory");
-                        lastKnowWeaponPickups.Remove(memorizedInfo);
-                    }
+                    weaponPickupInfos.Add(pickupInfo);
+                    canSeeWeapon = true;
+                }
+                // Check to find if the weapon already exists in memory
+                if (checkAgainstMemory)
+                {
+                    IsPickupMemorized(pickupInfo.Pickup, pickupInfo.Type, true);
                 }
 
                 if (remember) lastKnowWeaponPickups.Add(pickupInfo);
@@ -599,24 +621,60 @@ public class Daniel : MonoBehaviour
             case PickupType.HealingConsumable:
             case PickupType.ArmorConsumable:
 
-                itemPickupInfos.Add(pickupInfo);
-                canSeeItem = true;
+                // Add item to direct vision if not already seen to avoid duplicate vision
+                if (itemPickupInfos?.Find(x => x.Pickup == pickupInfo.Pickup) == null)
+                {
+                    itemPickupInfos.Add(pickupInfo);
+                    canSeeItem = true;
+                }
 
                 // Check to find if the weapon already exists in memory
-                if (checkAgainstMemory && lastKnowItemPickups?.Count > 0)
+                if (checkAgainstMemory)
                 {
-                    var memorizedInfo = lastKnowItemPickups?.Find(x => x.Pickup == pickupInfo.Pickup);
-                    //print($"Trying to remember {pickupInfo.Pickup.name}: {memorizedInfo?.Pickup?.name}");
-
-                    if (memorizedInfo != null)
-                    {
-                        print("Updating memory");
-                        lastKnowItemPickups.Remove(memorizedInfo);
-                    }
+                    IsPickupMemorized(pickupInfo.Pickup, pickupInfo.Type, true);
                 }
 
                 if (remember) lastKnowItemPickups.Add(pickupInfo);
                 break;
+        }
+    }
+
+    bool IsPickupMemorized(Pickup pickup, PickupType type, bool removeFromMemory = false)
+    {
+        switch (type)
+        {
+            case PickupType.Weapon:
+                if (lastKnowWeaponPickups?.Count > 0)
+                {
+                    var memorizedInfo = lastKnowWeaponPickups?.Find(x => x.Pickup == pickup);
+                    //print($"Trying to remember {pickupInfo.Pickup.name}: {memorizedInfo?.Pickup?.name}");
+
+                    if (removeFromMemory && memorizedInfo != null)
+                    {
+                        //print("Updating memory");
+                        lastKnowWeaponPickups.Remove(memorizedInfo);
+                    }
+                    return memorizedInfo != null;
+                }
+                return false;
+
+            case PickupType.HealingConsumable:
+            case PickupType.ArmorConsumable:
+                if (lastKnowItemPickups?.Count > 0)
+                {
+                    var memorizedInfo = lastKnowItemPickups?.Find(x => x.Pickup == pickup);
+                    //print($"Trying to remember {pickupInfo.Pickup.name}: {memorizedInfo?.Pickup?.name}");
+
+                    if (removeFromMemory && memorizedInfo != null)
+                    {
+                        //print("Updating memory");
+                        lastKnowItemPickups.Remove(memorizedInfo);
+                    }
+                    return memorizedInfo != null;
+                }
+                return false;
+            default:
+                return false;
         }
     }
 
@@ -633,13 +691,13 @@ public class Daniel : MonoBehaviour
         Move();
         Loot();
 
-        if (CheckHealth())
+        if (CheckHealthThreshold())
         {
-            lookingForHealth = Heal();
+            HealUp();
         }
-        else if (CheckArmor())
+        else if (CheckArmorThreshold())
         {
-            lookingForArmor = Armor();
+            ArmorUp();
         }
 
         Fight();
@@ -647,14 +705,10 @@ public class Daniel : MonoBehaviour
 
     void PrioritizeSituation()
     {
-        // Behave normally
-        if (bot.IsInRing)
-        {
-            
-        }
+        
     }
     
-    bool CheckHealth()
+    bool CheckHealthThreshold()
     {
         return bot.health < Mathf.Ceil(100 * healthThreshold);
     }
@@ -667,10 +721,12 @@ public class Daniel : MonoBehaviour
             if (item is HealingItem && ((HealingItem)item).Amount >= minHeal)
                 count++;
         }
+        //print($"Heal items held: {count}");
+
         return count;
     }
 
-    bool CheckArmor()
+    bool CheckArmorThreshold()
     {
         return bot.armor < Mathf.Ceil(100 * armorThreshold);
     }
@@ -683,6 +739,8 @@ public class Daniel : MonoBehaviour
             if (item is ArmorItem && ((ArmorItem)item).Amount >= minArmor)
                 count++;
         }
+        //print($"Armor items held: {count}");
+
         return count;
     }
 
@@ -701,8 +759,8 @@ public class Daniel : MonoBehaviour
                 /*direction = Vector3.Slerp(currentDirection, -scanHit.Direction,
                     (obstacleAvoidanceRadius - scanHit.Distance) / obstacleAvoidanceRadius);
                 print($"Avoiding obstacle: {direction.ToString()}");*/
-    }
-}
+            }
+        }
         currentDirection = direction;
         shouldExplore = true;
 
@@ -711,37 +769,66 @@ public class Daniel : MonoBehaviour
 
     void Loot()
     {
-        if (shouldPickupItem && pickupTarget != null)
+        if (lootSurroundings)
         {
-            if (Vector3.Distance(pickupTarget.transform.position, transform.position) < GameManager.instance.pickupRange)
+            foreach (var pickup in pickupTargets)
             {
-                if (pickupTarget is PickupWeapon)
+                if (Vector3.Distance(pickup.transform.position, transform.position) <= GameManager.instance.pickupRange)
                 {
-                    // Ignore lower dps weapons
-                    if (lookingForWeapon || WeaponDPS(((PickupWeapon)pickupTarget).weapon) > WeaponDPS(bot.weapon))
+                    if (pickup is PickupWeapon)
                     {
-                        // TODO - Remove weapon from memory
-                        lookingForWeapon = false;
-                        bot.Pickup(pickupTarget);
+                        EquipWeapon((PickupWeapon)pickup);
+                    }
+                    else if (pickup is PickupItem)
+                    {
+                        AddItemToInventory((PickupItem)pickup);
                     }
                 }
-                else if (pickupTarget is PickupItem)
-                {
-                    if (((PickupItem)pickupTarget).item is HealingItem)
-                    {
-                        
-                    }
-                    else if (((PickupItem)pickupTarget).item is ArmorItem)
-                    {
-                        
-                    }
-                }
-                
             }
         }
     }
 
+    void EquipWeapon(PickupWeapon pickup)
+    {
+        // Ignore lower dps weapons
+        // TODO - Add class specific preferences (fighter -> favors high dps/evader & looter -> favor high range)
+        if (lookingForWeapon || WeaponDPS(pickup.weapon) > WeaponDPS(bot.weapon))
+        {
+            print($"Equipping new weapon: {pickup.weapon.name}");
+            lookingForWeapon = false;
+            
+            // Remove from memory since it was just picked up
+            IsPickupMemorized(pickup, PickupType.Weapon, true);
+            bot.Pickup(pickup);
+        }
+    }
+
+    void AddItemToInventory(PickupItem pickup)
+    {
+        bot.Pickup(pickup);
+
+        // Remove from memory since it was just picked up
+        // Type doesn't matter, since they are both in the same list
+        IsPickupMemorized(pickup, PickupType.HealingConsumable, true);
+
+        if (pickup.item is HealingItem)
+        {
+            // TODO remember healing amount
+            // ...
+        }
+        else if (pickup.item is ArmorItem)
+        {
+            // TODO remember armor amount
+            // ...
+        }
+    }
+
     void Fight()
+    {
+
+    }
+
+    void Flee()
     {
 
     }
@@ -751,14 +838,12 @@ public class Daniel : MonoBehaviour
 
     }
 
-    void Evade()
+    void Center()
     {
 
     }
 
-    
-
-    bool Heal()
+    bool HealUp()
     {
         HealingItem healing = bot.FindItem<HealingItem>();
         if (healing != null)
@@ -771,7 +856,7 @@ public class Daniel : MonoBehaviour
         return false;
     }
 
-    bool Armor()
+    bool ArmorUp()
     {
         ArmorItem armor = bot.FindItem<ArmorItem>();
         if (armor != null)
@@ -782,8 +867,6 @@ public class Daniel : MonoBehaviour
         }
         return false;
     }
-
-    
 
     void Debug_MarkPosition(Vector3 position, Color color, float scale = 1)
     {
