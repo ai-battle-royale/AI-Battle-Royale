@@ -16,6 +16,7 @@ public class RingManager : MonoBehaviour
     public static RingManager instance;
 
     public GameObject ring;
+    public GameObject nextRing;
     public RingState[] ringStates;
     public int currentRingStateIndex;
     public Vector3 nextLocation;
@@ -84,7 +85,7 @@ public class RingManager : MonoBehaviour
         {
             nextRingState = new RingState
             {
-                radius = 1,
+                radius = 0,
                 damage = currentRingState.damage,
                 moveTime = 10
             };
@@ -96,6 +97,9 @@ public class RingManager : MonoBehaviour
         var locationOffset = new Vector3(Mathf.Sin(r), 0, Mathf.Cos(r));
 
         nextLocation = ring.transform.position + locationOffset * (currentRingState.radius - nextRingState.radius);
+
+        nextRing.transform.position = nextLocation;
+        nextRing.transform.localScale = new Vector3(nextRingState.radius * 2, 10000, nextRingState.radius * 2);
 
         var currentLocation = ring.transform.position;
 
