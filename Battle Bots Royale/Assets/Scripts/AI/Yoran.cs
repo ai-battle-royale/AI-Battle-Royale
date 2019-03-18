@@ -34,6 +34,11 @@ public class Yoran : MonoBehaviour {
         var isDangerous = false;
         var lowHealth = Controller.health < 50;
 
+        if (!Controller.IsInNextRing)
+        {
+            direction = (Controller.NextRingCenter - transform.position).normalized;
+        }
+
         for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 8) {
             var dir = new Vector3(Mathf.Cos(i + angleOffset), 0, Mathf.Sin(i + angleOffset));
             var scan = Controller.Scan(dir);
@@ -114,10 +119,11 @@ public class Yoran : MonoBehaviour {
                     isPickingUpItem = true;
                 }
             }
-            else if (!Controller.IsInRing)
-            {
-                direction = (Controller.RingCenter - transform.position).normalized;
-            }
+        }
+
+        if (!Controller.IsInRing)
+        {
+            direction = (Controller.RingCenter - transform.position).normalized;
         }
 
         if (pickupTarget != null) {
