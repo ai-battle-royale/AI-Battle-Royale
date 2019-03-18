@@ -22,6 +22,11 @@ public class Geert : MonoBehaviour
         var healingItem = BotInterface.FindItem<HealingItem>();
         var armorItem = BotInterface.FindItem<ArmorItem>();
 
+        if (!BotInterface.IsInNextRing)
+        {
+            direction = (BotInterface.NextRingCenter - transform.position).normalized;
+        }
+
         for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 8)
         {
             var dir = new Vector3(Mathf.Cos(i), 0, Mathf.Sin(i));
