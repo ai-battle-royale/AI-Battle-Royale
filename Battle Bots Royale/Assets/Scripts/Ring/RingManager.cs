@@ -76,7 +76,7 @@ public class RingManager : MonoBehaviour
 
         print($"Ring closing in {currentRingState.time} seconds! Radius {currentRingState.radius}");
 
-        if (currentRingStateIndex < ringStates.Length)
+        if (currentRingStateIndex < ringStates.Length - 1)
         {
             nextRingState = ringStates[currentRingStateIndex + 1];
         }
