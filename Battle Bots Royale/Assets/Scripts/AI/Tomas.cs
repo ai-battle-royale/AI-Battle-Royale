@@ -34,7 +34,7 @@ public class Tomas : MonoBehaviour
             var scan = Manager.Scan(dir);
 
             var enemy = scan.type == HitType.Enemy;
-            if (!Manager.IsInRing)
+            if (!Manager.IsInNextRing)
             {
                 Manager.Move(Manager.NextRingCenter);
             }
