@@ -27,7 +27,7 @@ public class Geert : MonoBehaviour
             var dir = new Vector3(Mathf.Cos(i), 0, Mathf.Sin(i));
             var scan = BotInterface.Scan(dir);
 
-
+  
             if (scan.type == HitType.World)
             {
                 if (scan.distance < 1)
@@ -52,7 +52,7 @@ public class Geert : MonoBehaviour
 
                 if (pickupTarget is PickupWeapon pickupWeapon)
                 {
-                    if (pickupWeapon.weapon.damage > BotInterface.weapon.damage)
+                    if (pickupWeapon.weapon.range > BotInterface.weapon.range)
                     {
                         direction = (pickupTarget.transform.position - transform.position).normalized;
                         BotInterface.Pickup(pickupTarget.GetComponent<Pickup>());
