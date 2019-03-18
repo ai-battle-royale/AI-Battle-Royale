@@ -40,9 +40,9 @@ public class Tomas : MonoBehaviour
             else if (enemy)
             {
                 Manager.Shoot(dir);
-                if (Manager.weapon == null && Manager.health < 70)
+                if (Manager.health < 50)
                 {
-                    direction = scan.distance > 2f ? dir : -dir;
+                    direction = scan.distance > 1f ? dir : -dir;
                 }
                 else
                 {
@@ -77,8 +77,19 @@ public class Tomas : MonoBehaviour
 
                 pickupTarget = scan.pickup;
 
-                direction = (pickupTarget.transform.position - transform.position).normalized;
-                Manager.Pickup(pickupTarget.GetComponent<Pickup>());
+                if (pickupTarget is PickupWeapon pickupWeapon)
+                {
+                    if (pickupWeapon.weapon.damage > Manager.weapon.damage)
+                    {
+                        Manager.Pickup(pickupTarget);
+                        direction = (pickupTarget.transform.position - transform.position).normalized;
+                    }
+                }
+                else
+                {
+                    Manager.Pickup(pickupTarget);
+                    direction = (pickupTarget.transform.position - transform.position).normalized;
+                }
 
             }
             
