@@ -96,7 +96,7 @@ public class RingManager : MonoBehaviour
         var r = Random.Range(0, Mathf.PI * 2);
         var locationOffset = new Vector3(Mathf.Sin(r), 0, Mathf.Cos(r));
 
-        nextLocation = ring.transform.position + locationOffset * (currentRingState.radius - nextRingState.radius);
+        nextLocation = Vector3.Scale(ring.transform.position + locationOffset * (currentRingState.radius - nextRingState.radius), new Vector3(1,0,1));
 
         nextRing.transform.position = nextLocation;
         nextRing.transform.localScale = new Vector3(nextRingState.radius * 2, 10000, nextRingState.radius * 2);
