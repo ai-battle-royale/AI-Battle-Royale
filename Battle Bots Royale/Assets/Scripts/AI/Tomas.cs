@@ -36,7 +36,7 @@ public class Tomas : MonoBehaviour
             var enemy = scan.type == HitType.Enemy;
             if (!Manager.IsInRing)
             {
-                Manager.Move(Manager.RingCenter);
+                Manager.Move(Manager.NextRingCenter);
             }
             //avoid collisions by moving to another direction
             if (scan.type == HitType.World)
