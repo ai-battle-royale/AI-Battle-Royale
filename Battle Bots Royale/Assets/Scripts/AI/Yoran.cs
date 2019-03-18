@@ -116,7 +116,6 @@ public class Yoran : MonoBehaviour {
             }
             else if (!Controller.IsInRing)
             {
-                print("Move towards circle");
                 direction = (Controller.RingCenter - transform.position).normalized;
             }
         }
