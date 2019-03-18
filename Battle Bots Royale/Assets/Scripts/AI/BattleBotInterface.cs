@@ -39,7 +39,7 @@ public class BattleBotInterface : MonoBehaviour {
     public float RingRadius => RingManager.instance.currentRingState.radius;
     public Vector3 NextRingCenter => RingManager.instance.nextLocation;
     public float NextRingRadius => RingManager.instance.nextRingState.radius;
-    public bool IsInRing => Vector3.Distance(transform.position, RingCenter) > ringRadius;
+    public bool IsInRing => Vector3.Distance(transform.position, RingCenter) > RingRadius;
 
     private RigidbodyController rigidbodyController;
     private RectTransform labelObject;
