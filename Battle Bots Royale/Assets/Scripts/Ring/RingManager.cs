@@ -63,7 +63,7 @@ public class RingManager : MonoBehaviour
 
             foreach (var bot in bots)
             {
-                var distance = Vector3.Distance(bot.transform.position, ring.transform.position);
+                var distance = Vector3.Distance(bot.transform.position, Vector3.Scale(ring.transform.position, new Vector3(1, 0, 1)));
 
                 if (distance > currentRingState.radius)
                     bot.TakeDamage(currentRingState.damage);

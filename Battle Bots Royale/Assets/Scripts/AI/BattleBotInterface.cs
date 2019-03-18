@@ -35,11 +35,11 @@ public class BattleBotInterface : MonoBehaviour {
     public bool             IsUsingItem;
     public BotLabel botLabel;
 
-    public Vector3 RingCenter => RingManager.instance.ring.transform.position;
+    public Vector3 RingCenter => Vector3.Scale(RingManager.instance.ring.transform.position, new Vector3(1,0,1));
     public float RingRadius => RingManager.instance.currentRingState.radius;
     public Vector3 NextRingCenter => RingManager.instance.nextLocation;
     public float NextRingRadius => RingManager.instance.nextRingState.radius;
-    public bool IsInRing => Vector3.Distance(transform.position, RingCenter) > RingRadius;
+    public bool IsInRing => Vector3.Distance(transform.position, RingCenter) < RingRadius;
 
     private RigidbodyController rigidbodyController;
     private RectTransform labelObject;
