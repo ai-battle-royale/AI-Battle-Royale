@@ -35,7 +35,7 @@ public class BattleBotInterface : MonoBehaviour {
     public bool             IsUsingItem;
     public BotLabel botLabel;
 
-    public Vector3 RingCenter => Vector3.Scale(RingManager.instance.ring.transform.position, new Vector3(1,0,1));
+    public Vector3 RingCenter => RingManager.instance.ring.transform.position;
     public float RingRadius => RingManager.instance.currentRingState.radius;
     public Vector3 NextRingCenter => RingManager.instance.nextLocation;
     public float NextRingRadius => RingManager.instance.nextRingState.radius;
