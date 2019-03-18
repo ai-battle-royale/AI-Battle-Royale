@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public float timeScale = 1f;
 
     void Awake() {
-        var managers = FindObjectsOfType<OwnedObjectObserver>();
+        var managers = FindObjectsOfType<GameManager>();
 
         if (managers.Length > 1) {
             Debug.LogError("Too many GameManager components present in scene.");
