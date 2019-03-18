@@ -42,12 +42,23 @@ public class Geert : MonoBehaviour
 
                 break;
             }
+
             else if (scan.type == HitType.Item)
             {
                 pickupTarget = scan.pickup;
 
-                direction = (pickupTarget.transform.position - transform.position).normalized;
-                BotInterface.Pickup(pickupTarget.GetComponent<Pickup>());
+                if (pickupTarget is PickupWeapon pickupWeapon)
+                {
+                    if (pickupWeapon.weapon.damage > BotInterface.weapon.damage)
+                    {
+                        direction = (pickupTarget.transform.position - transform.position).normalized;
+                        BotInterface.Pickup(pickupTarget.GetComponent<Pickup>());
+                    }
+                }
+                else
+                {
+                    BotInterface.Pickup(pickupTarget.GetComponent<Pickup>());
+                }
 
             }
 
