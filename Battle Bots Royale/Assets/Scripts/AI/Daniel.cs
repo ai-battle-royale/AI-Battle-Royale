@@ -983,7 +983,7 @@ public class Daniel : MonoBehaviour
         // TODO - Add class specific preferences (fighter -> favors high dps/evader & looter -> favor high range)
         if (lookingForWeapon || WeaponDPS(pickup.weapon) > WeaponDPS(bot.weapon))
         {
-            print($"Equipping new weapon: {pickup.weapon.name}");
+            print($"Equipping new weapon: {pickup.weapon.weaponName}");
             lookingForWeapon = false;
             
             // Remove from memory since it was just picked up

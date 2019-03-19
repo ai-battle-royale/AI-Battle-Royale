@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  name: fists
+  weaponName: fists
   pickupPrefab: {fileID: 0}
   prefab: {fileID: 0}
   ammoType: 0

@@ -79,7 +79,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// <summary>
     /// Damages the BattleBot's armor and health
     /// </summary>
-    public void TakeDamage (float amount) {
+    public void TakeDamage (float amount, BattleBotInterface instigator = null) {
         // How much damage will be subtracted from the health value.
         var damageToHealth = Mathf.Max(0, amount - armor);
 
@@ -87,7 +87,14 @@ public class BattleBotInterface : MonoBehaviour {
         health = Mathf.Max(0, health - damageToHealth);
 
         if (health == 0) {
-            print($"Bot '{gameObject.name}' died!");
+
+            if (instigator != null)
+            {
+                print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
+            } else
+            {
+                print($"'{gameObject.name} died!");
+            }
 
             Destroy(gameObject);
             Destroy(labelObject.gameObject);
@@ -136,7 +143,7 @@ public class BattleBotInterface : MonoBehaviour {
                 if (pickup is PickupWeapon) {
                     if (weapon.pickupPrefab != null) {
                         //StartCoroutine(CreatePickup(weapon.pickupPrefab, pickup.transform.position));
-                        Instantiate(weapon.pickupPrefab, pickup.transform.position, Quaternion.identity);
+                        Instantiate(weapon.pickupPrefab, pickup.transform.position, Quaternion.identity, GameObject.FindGameObjectWithTag("PickupParent").transform);
                     }
                 }
 

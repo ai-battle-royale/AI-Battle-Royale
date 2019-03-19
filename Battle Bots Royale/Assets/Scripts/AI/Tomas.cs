@@ -36,7 +36,11 @@ public class Tomas : MonoBehaviour
             var enemy = scan.type == HitType.Enemy;
             if (!Manager.IsInNextRing)
             {
-                Manager.Move(Manager.NextRingCenter);
+                direction = (Manager.NextRingCenter - transform.position).normalized;
+                if (scan.type == HitType.World)
+                {
+                    direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                }
             }
             //avoid collisions by moving to another direction
             if (scan.type == HitType.World)

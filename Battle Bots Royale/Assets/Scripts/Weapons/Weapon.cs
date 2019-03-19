@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/New Weapon")]
 public class Weapon : OwnedObject {
 
-    public string name;
+    public string weaponName;
     public GameObject pickupPrefab;
     public GameObject prefab;
     public AmmoType ammoType;
@@ -31,7 +31,7 @@ public class Weapon : OwnedObject {
     /// Gets called when the weapon hits an enemy in the default Shoot() method.
     /// </summary>
     public virtual void OnHit(BattleBotInterface enemy) {
-        enemy.TakeDamage(damage);
+        enemy.TakeDamage(damage, controller);
     }
 
     /// <summary>
