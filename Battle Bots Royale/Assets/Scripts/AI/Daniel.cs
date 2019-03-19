@@ -4,7 +4,7 @@
 
 
 using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -82,6 +82,11 @@ public class Daniel : MonoBehaviour
             Position = pickup.transform.position;
             Pickup = pickup;
         }
+
+        public float GetDistanceTo(Vector3 position)
+        {
+            return Vector3.Distance(position, Position);
+        }
     }
     [Serializable]
     class EnemyInfo
@@ -139,6 +144,26 @@ public class Daniel : MonoBehaviour
         Center
     }
 
+    [Serializable]
+    class Priority
+    {
+        [ReadOnly, SerializeField] private PriorityType _type;
+        [ReadOnly, SerializeField] private int _value;
+
+        public int Value            { get => _value; set => _value = value; }
+        public PriorityType Type    { get => _type; set => _type = value; }
+
+        public Priority()
+        {
+        }
+
+        public Priority(PriorityType type, int value) : this()
+        {
+            Value = value;
+            Type = type;
+        }
+    }
+
     private BattleBotInterface bot;
 
     [Header("-----------------")]
@@ -179,7 +204,8 @@ public class Daniel : MonoBehaviour
     [Header("Actions")]
     [ReadOnly, SerializeField] Vector3 currentDirection;
     [ReadOnly, SerializeField] bool avoidObstacle;
-    [ReadOnly, SerializeField] List<Pickup> pickupTargets;
+    [ReadOnly, SerializeField] Vector3 desiredPosition;
+    [ReadOnly, SerializeField] Vector3 explorePosition;
     [ReadOnly, SerializeField] bool lootSurroundings;
 
     [Header("Stats")]
@@ -196,17 +222,17 @@ public class Daniel : MonoBehaviour
     [ReadOnly, SerializeField] int fleePriority;
     [ReadOnly, SerializeField] int explorePriority;
     [ReadOnly, SerializeField] int centerPriority;
-    [ReadOnly, SerializeField] Dictionary<PriorityType, int> priorities;
+    [ReadOnly, SerializeField] List<Priority> priorities;
 
     [Header("Sensors")]
     [ReadOnly, SerializeField] bool canSeeEnemy;
     [ReadOnly, SerializeField] bool canSeeItem;
     [ReadOnly, SerializeField] bool canSeeWeapon;
     [ReadOnly, SerializeField] bool movingTowardsObstacle;
-    [ReadOnly, SerializeField] private float currentAngleOffset = 0;
+    [ReadOnly, SerializeField] float currentAngleOffset;
 
     [Header("Memory")]
-    [ReadOnly, SerializeField] List<EnemyInfo>      enemyBots;     // Needs health/dmg tracking & player assosiation
+    [ReadOnly, SerializeField] List<EnemyInfo>      enemyInfos;     // Needs health/dmg tracking & player assosiation
     [ReadOnly, SerializeField] List<PickupInfo>     itemPickupInfos;      // needs item assosiation
     [ReadOnly, SerializeField] List<PickupInfo>     weaponPickupInfos;   // needs weapon type assosiation
     [ReadOnly, SerializeField] List<ObstacleInfo>   surroundingObstacles;
@@ -233,7 +259,6 @@ public class Daniel : MonoBehaviour
         currentDirection.Normalize();
 
         ResetBrain();
-        RebuildPriorities();
     }
 
     void ResetBrain()
@@ -243,14 +268,15 @@ public class Daniel : MonoBehaviour
         avoidObstacle       = false;
         currentDirection    = Vector3.zero;
 
-        pickupTargets       = new List<Pickup>();
+        desiredPosition     = transform.position;
+        desiredPosition     = Vector3.zero;
         lootSurroundings    = false;
 
         kills               = 0;
         totalDamageTaken    = 0;
         totalDamageDealt    = 0;
 
-        RebuildPriorities();
+        ClearPriorities();
 
         canSeeEnemy     = false;
         canSeeItem      = false;
@@ -269,7 +295,7 @@ public class Daniel : MonoBehaviour
 
     void ClearInfo(bool clearInfoMemory = false)
     {
-        enemyBots               = new List<EnemyInfo>();
+        enemyInfos               = new List<EnemyInfo>();
         itemPickupInfos         = new List<PickupInfo>();
         weaponPickupInfos       = new List<PickupInfo>();
 
@@ -284,38 +310,44 @@ public class Daniel : MonoBehaviour
         }
     }
 
+    void ClearPriorities()
+    {
+        weaponPriority = 0;
+        healPriority = 0;
+        armorPriority = 0;
+
+        fightPriority = 0;
+        fleePriority = 0;
+
+        explorePriority = 0;
+        centerPriority = 0;
+    }
+
     #region Action prioritization
     void RebuildPriorities()
     {
-        weaponPriority  = 0;
-        healPriority    = 0;
-        armorPriority   = 0;
-
-        fightPriority   = 0;
-        fleePriority    = 0;
-
-        explorePriority = 0;
-        centerPriority  = 0;
-
+        ClearPriorities();
         ApplyDesirePriorities();
         ApplyUrgePriorities();
         ApplyThresholdDesires();
 
-        priorities = new Dictionary<PriorityType, int>()
+        priorities = new List<Priority>()
         {
             // Looting Prios
-            { PriorityType.Weapon,  weaponPriority  },
-            { PriorityType.Heal,    healPriority    },
-            { PriorityType.Armor,   armorPriority   },
+            new Priority(PriorityType.Weapon,  weaponPriority),
+            new Priority(PriorityType.Heal,    healPriority),
+            new Priority(PriorityType.Armor,   armorPriority),
 
             // Enemy Encounter Prios
-            { PriorityType.Fight,   fightPriority   },
-            { PriorityType.Flee,    fleePriority    },
+            new Priority(PriorityType.Fight,   fightPriority),
+            new Priority(PriorityType.Flee,    fleePriority),
 
             // Move Prios
-            { PriorityType.Explore, explorePriority },
-            { PriorityType.Center,  centerPriority  }
+            new Priority(PriorityType.Explore, explorePriority),
+            new Priority(PriorityType.Center,  centerPriority)
         };
+
+        priorities.Sort((x, y) => y.Value.CompareTo(x.Value));
     }
     void ApplyDesirePriorities()
     {
@@ -473,7 +505,10 @@ public class Daniel : MonoBehaviour
 
         // Create a list of pickups, enemies and possible obstacles
         //  and loop over all scan results and remember them
-        AssignScanResults(ScanSurroundings());// LayerMask.GetMask("Bot", "Pickup")));
+        currentAngleOffset += 2 * Mathf.PI / rayStep;
+        ClearInfo();
+        AssignScanResults(ScanSurroundings(LayerMask.GetMask("Bot", "Pickup")));
+        AssignScanResults(ScanSurroundings(~LayerMask.GetMask("Bot", "Pickup")));
 
         // Act upon brain and memory
         TakeAction();
@@ -491,7 +526,6 @@ public class Daniel : MonoBehaviour
 
     List<AdvancedScanInfo> ScanSurroundings(LayerMask layerMask = default)
     {
-        currentAngleOffset += 2 * Mathf.PI / rayStep;
         var angleStep = 2 * Mathf.PI / rayCount;
 
         var scans = new List<AdvancedScanInfo>();
@@ -514,8 +548,6 @@ public class Daniel : MonoBehaviour
     void AssignScanResults(List<AdvancedScanInfo> scans)
     {
         var direction = currentDirection;
-
-        ClearInfo();
 
         foreach (var scanHit in scans)
         {
@@ -543,14 +575,7 @@ public class Daniel : MonoBehaviour
         // TODO - Use bots collider diameter to check if it can fit in between two obstacles at any distance
         var obstacleInfo = new ObstacleInfo(transform.position + obstacle.Direction * obstacle.Distance,
             obstacle.Distance);
-        if (AreObstaclesBlockingDesiredDirection(obstacle.Direction, obstacle.Distance))
-        {
-            obstaclesInFront.Add(obstacleInfo);
-        }
-        else
-        {
-            surroundingObstacles.Add(obstacleInfo);
-        }
+        surroundingObstacles.Add(obstacleInfo);
     }
 
     bool AreObstaclesBlockingDesiredDirection(Vector3 direction, float distance)
@@ -568,7 +593,7 @@ public class Daniel : MonoBehaviour
         var enemyInfo = new EnemyInfo(transform.position + enemy.Direction * (enemy.Distance + .5f));
 
         Debug_MarkPosition(enemyInfo.Position, Color.red);
-        enemyBots.Add(enemyInfo);
+        enemyInfos.Add(enemyInfo);
         canSeeEnemy = true;
 
         // TODO - prediction like a check for vicinty (has the bot move from last known location)
@@ -686,11 +711,13 @@ public class Daniel : MonoBehaviour
 
     void TakeAction()
     {
-        PrioritizeSituation();
-
+        // Where do I want to go? What are my priorities?
         Move();
+
+        // Are there any items neraby? Loot them?
         Loot();
 
+        // Do I need to heal up?
         if (CheckHealthThreshold())
         {
             HealUp();
@@ -703,11 +730,15 @@ public class Daniel : MonoBehaviour
         Fight();
     }
 
-    void PrioritizeSituation()
+    private void Fight()
     {
-        
+        if (enemyInfos?.Count > 0)
+        {
+            enemyInfos.Sort((x, y) => y.DamageEstimation.CompareTo(x.DamageEstimation));
+            bot.Shoot(enemyInfos[0].Position - transform.position);
+        }
     }
-    
+
     bool CheckHealthThreshold()
     {
         return bot.health < Mathf.Ceil(100 * healthThreshold);
@@ -746,42 +777,200 @@ public class Daniel : MonoBehaviour
 
     void Move()
     {
-        var direction = new Vector3();
-        foreach (var obstacle in obstaclesInFront)
+        //var direction = new Vector3();
+        // Where do I want to go?
+        foreach (var priority in priorities)
         {
-
+            bool isPrioritized = false;
+            switch (priority.Type)
+            {
+                case PriorityType.Weapon:
+                    isPrioritized = MoveTowardsWeapon();
+                    break;
+                case PriorityType.Heal:
+                    isPrioritized = MoveTowardsHeal();
+                    break;
+                case PriorityType.Armor:
+                    isPrioritized = MoveTowardsArmor();
+                    break;
+                case PriorityType.Fight:
+                    isPrioritized = MoveTowardsFight();
+                    break;
+                case PriorityType.Flee:
+                    isPrioritized = FleeFromThreat();
+                    break;
+                case PriorityType.Explore:
+                    isPrioritized = ExploreArea();
+                    break;
+                case PriorityType.Center:
+                    isPrioritized = MoveTowardsCenter();
+                    break;
+            }
+            if (isPrioritized) break;
         }
 
+        currentDirection = desiredDirection = desiredPosition - transform.position;
+        Debug_MarkPosition(desiredPosition, Color.magenta);
+
+        // Is there anything in my way?
         foreach (var obstacle in surroundingObstacles)
+        {
+            if(AreObstaclesBlockingDesiredDirection(desiredDirection, obstacle.Distance))
+            {
+                obstaclesInFront.Add(obstacle);
+            }
+        }
+
+        // How do I get around it?
+        foreach (var obstacle in obstaclesInFront)
         {
             if (obstacle.Distance <= obstacleAvoidanceRadius)
             {
-                /*direction = Vector3.Slerp(currentDirection, -scanHit.Direction,
-                    (obstacleAvoidanceRadius - scanHit.Distance) / obstacleAvoidanceRadius);
-                print($"Avoiding obstacle: {direction.ToString()}");*/
+                currentDirection = Vector3.Slerp(currentDirection, -currentDirection,
+                    (obstacleAvoidanceRadius - obstacle.Distance) / obstacleAvoidanceRadius);
+                print($"Avoiding obstacle: {currentDirection.ToString()}");
             }
         }
-        currentDirection = direction;
-        shouldExplore = true;
 
-        if (shouldExplore) bot.Move(currentDirection);
+        bot.Move(currentDirection);
+        Debug.DrawLine(transform.position, transform.position + currentDirection * 5, Color.magenta);
+    }
+
+    bool MoveTowardsWeapon()
+    {
+        // TODO compare dps per distance metric
+        if (weaponPickupInfos?.Count > 0)
+        {
+            weaponPickupInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = weaponPickupInfos[0].Pickup.transform.position;
+            return true;
+        }
+        else if (lastKnowWeaponPickups?.Count > 0)
+        {
+            lastKnowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = lastKnowWeaponPickups[0].Pickup.transform.position;
+            return true;
+        }
+        return false;
+    }
+
+    bool MoveTowardsArmor()
+    {
+        // TODO compare amount
+        var armorInfos = itemPickupInfos.FindAll(x => x.Type == PickupType.ArmorConsumable);
+        if (armorInfos?.Count > 0)
+        {
+            armorInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = armorInfos[0].Pickup.transform.position;
+            return true;
+        }
+
+        var knownArmorInfos = lastKnowItemPickups.FindAll(x => x.Type == PickupType.ArmorConsumable);
+        if (knownArmorInfos?.Count > 0)
+        {
+            lastKnowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = lastKnowWeaponPickups[0].Pickup.transform.position;
+            return true;
+        }
+        return false;
+    }
+
+    bool MoveTowardsHeal()
+    {
+        // TODO compare amount
+        var healInfos = itemPickupInfos.FindAll(x => x.Type == PickupType.HealingConsumable);
+        if (healInfos?.Count > 0)
+        {
+            healInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = healInfos[0].Pickup.transform.position;
+            return true;
+        }
+
+        var knownHealInfos = lastKnowItemPickups.FindAll(x => x.Type == PickupType.HealingConsumable);
+        if (knownHealInfos?.Count > 0)
+        {
+            lastKnowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = lastKnowWeaponPickups[0].Pickup.transform.position;
+            return true;
+        }
+        return false;
+    }
+
+    bool MoveTowardsFight()
+    {
+        // TODO - Get enemys locations from memory
+        // TODO - Duck in and out of range/cover depending on weapon fire rate
+        // Move in range of the enemy with the highest tracked damage taken
+        if (enemyInfos?.Count > 0)
+        {
+            enemyInfos.Sort((x, y) => y.DamageEstimation.CompareTo(x.DamageEstimation));
+
+            // Move into attack range
+            if (Vector3.Distance(enemyInfos[0].Position, transform.position) < bot.weapon.range)
+                desiredPosition = (enemyInfos[0].Position - transform.position).normalized;
+            return true;
+        }
+        return false;
+    }
+
+    bool FleeFromThreat()
+    {
+        // Flee from enemy with highest threat level within vision
+        if (enemyInfos.Count > 0)
+        {
+            enemyInfos.Sort((x, y) => y.ThreatLevel.CompareTo(x.ThreatLevel));
+            desiredPosition = (transform.position - enemyInfos[0].Position).normalized;
+            return true;
+        }
+        return false;
+    }
+
+    bool MoveTowardsCenter()
+    {
+        if (!bot.IsInRing)
+        {
+            desiredPosition = bot.RingCenter;
+        }
+        else
+        {
+            desiredPosition = bot.NextRingCenter;
+        }
+        return true;
+    }
+
+    bool ExploreArea()
+    {
+        // If explore position is reached, set new position
+        if (Vector3.Distance(transform.position, explorePosition) <= 5f || explorePosition == Vector3.zero)
+        {
+            var x = Mathf.Clamp(Random.value * bot.RingRadius - bot.RingRadius / 2f, -100f, 100f);
+            var y = Mathf.Clamp(Random.value * bot.RingRadius - bot.RingRadius / 2f, -100f, 100f);
+            desiredPosition = explorePosition = bot.RingCenter + new Vector3(x, 0, y);
+        }
+        return true;
     }
 
     void Loot()
     {
+        lootSurroundings = lookingForWeapon || lookingForArmor || lookingForHealth;
         if (lootSurroundings)
         {
-            foreach (var pickup in pickupTargets)
+            var pickupsInSight = new List<PickupInfo>();
+            pickupsInSight.AddRange(weaponPickupInfos);
+            pickupsInSight.AddRange(itemPickupInfos);
+
+            foreach (var pickupInfo in pickupsInSight)
             {
-                if (Vector3.Distance(pickup.transform.position, transform.position) <= GameManager.instance.pickupRange)
+                var distanceToPickup = Vector3.Distance(pickupInfo.Pickup.transform.position, transform.position);
+                if (distanceToPickup <= GameManager.instance.pickupRange)
                 {
-                    if (pickup is PickupWeapon)
+                    if (pickupInfo.Pickup is PickupWeapon)
                     {
-                        EquipWeapon((PickupWeapon)pickup);
+                        EquipWeapon((PickupWeapon)pickupInfo.Pickup);
                     }
-                    else if (pickup is PickupItem)
+                    else if (pickupInfo.Pickup is PickupItem)
                     {
-                        AddItemToInventory((PickupItem)pickup);
+                        AddItemToInventory((PickupItem)pickupInfo.Pickup);
                     }
                 }
             }
@@ -821,26 +1010,6 @@ public class Daniel : MonoBehaviour
             // TODO remember armor amount
             // ...
         }
-    }
-
-    void Fight()
-    {
-
-    }
-
-    void Flee()
-    {
-
-    }
-
-    void Explore ()
-    {
-
-    }
-
-    void Center()
-    {
-
     }
 
     bool HealUp()
