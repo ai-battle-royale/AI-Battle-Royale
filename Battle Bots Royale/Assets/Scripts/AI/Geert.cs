@@ -71,11 +71,11 @@ public class Geert : MonoBehaviour
             }
 
         }
-        if (BotInterface.health <= 50)
+        if (BotInterface.health <= 75)
         {
             BotInterface.UseItem(healingItem);
         }
-        if (BotInterface.armor <= 50)
+        if (BotInterface.armor <= 75)
         {
             BotInterface.UseItem(armorItem);
         }
