@@ -12,6 +12,7 @@ public class Yoran : MonoBehaviour {
     Pickup pickupTarget;
 
     Dictionary<string, int> weaponWeights = new Dictionary<string, int> {
+        {"heavy",6 },
         {"rifle", 5},
         {"pistol", 4},
         {"fists", 0}
