@@ -87,7 +87,14 @@ public class BattleBotInterface : MonoBehaviour {
         health = Mathf.Max(0, health - damageToHealth);
 
         if (health == 0) {
-            print($"'{instigator.gameObject.name}' killed {gameObject.name} died!");
+
+            if (instigator != null)
+            {
+                print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
+            } else
+            {
+                print($"'{gameObject.name} died!");
+            }
 
             Destroy(gameObject);
             Destroy(labelObject.gameObject);
