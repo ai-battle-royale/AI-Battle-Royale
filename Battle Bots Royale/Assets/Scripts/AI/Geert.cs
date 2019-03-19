@@ -31,20 +31,12 @@ public class Geert : MonoBehaviour
 
             if (!BotInterface.IsInNextRing)
             {
-
-                if (scan.type == HitType.World)
-                {
-                    direction = Vector3.Slerp(direction, -dir, 100 - (scan.distance / GameManager.instance.maxLookDistance));
-                }
-                else
-                {
-                    direction = (BotInterface.NextRingCenter - transform.position).normalized;
-                }
+                direction = (BotInterface.NextRingCenter - transform.position).normalized;
             }
 
-            if (scan.type == HitType.World)
+            else if (scan.type == HitType.World)
             {
-                if (scan.distance < 3)
+                if (scan.distance < 1)
                 {
                     direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
                 }
@@ -88,6 +80,12 @@ public class Geert : MonoBehaviour
             BotInterface.UseItem(armorItem);
         }
 
+        var worldScan = BotInterface.Scan(direction);
+        if (worldScan.type == HitType.World)
+        {
+            direction = Vector3.Slerp(direction, -direction, 1 - (worldScan.distance / GameManager.instance.maxLookDistance));
+        }
+        
         BotInterface.Move(direction);
 
 
