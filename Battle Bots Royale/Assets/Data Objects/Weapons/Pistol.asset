@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   controller: {fileID: 0}
-  name: pistol
+  weaponName: pistol
   pickupPrefab: {fileID: 5225676350459348702, guid: 5d8b27d9ea317404f9c8b2e158b12a8f,
     type: 3}
   prefab: {fileID: 1697830817666819625, guid: 87e26222e76a2b64d9fa74d7a5943d2e, type: 3}

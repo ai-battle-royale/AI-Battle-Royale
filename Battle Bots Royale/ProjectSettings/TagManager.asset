@@ -8,6 +8,7 @@ TagManager:
   - GameManager
   - Pickup
   - Bot
+  - PickupParent
   layers:
   - Default
   - TransparentFX

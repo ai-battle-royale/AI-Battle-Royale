@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapons/New Weapon")]
 public class Weapon : OwnedObject {
 
-    public string name;
+    public string weaponName;
     public GameObject pickupPrefab;
     public GameObject prefab;
     public AmmoType ammoType;

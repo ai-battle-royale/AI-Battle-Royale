@@ -143,7 +143,7 @@ public class BattleBotInterface : MonoBehaviour {
                 if (pickup is PickupWeapon) {
                     if (weapon.pickupPrefab != null) {
                         //StartCoroutine(CreatePickup(weapon.pickupPrefab, pickup.transform.position));
-                        Instantiate(weapon.pickupPrefab, pickup.transform.position, Quaternion.identity);
+                        Instantiate(weapon.pickupPrefab, pickup.transform.position, Quaternion.identity, GameObject.FindGameObjectWithTag("PickupParent").transform);
                     }
                 }
 

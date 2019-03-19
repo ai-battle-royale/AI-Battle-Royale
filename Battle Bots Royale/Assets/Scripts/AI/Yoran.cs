@@ -110,7 +110,7 @@ public class Yoran : MonoBehaviour
                 }
                 else if (pickupTarget is PickupWeapon pickupWeapon)
                 {
-                    if (weaponWeights.ContainsKey(pickupWeapon.weapon.name) && (weaponWeights[pickupWeapon.weapon.name] > weaponWeights[Controller.weapon.name]))
+                    if (weaponWeights.ContainsKey(pickupWeapon.weapon.weaponName) && (weaponWeights[pickupWeapon.weapon.weaponName] > weaponWeights[Controller.weapon.weaponName]))
                     {
                         tryToPickup = true;
                     }
@@ -124,6 +124,9 @@ public class Yoran : MonoBehaviour
                     direction = (pickupTarget.transform.position - transform.position).normalized;
 
                     isPickingUpItem = true;
+                } else
+                {
+                    pickupTarget = null;
                 }
             }
         }
