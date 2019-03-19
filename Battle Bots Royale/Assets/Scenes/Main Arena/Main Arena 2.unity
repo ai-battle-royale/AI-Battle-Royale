@@ -13862,6 +13862,7 @@ MonoBehaviour:
   - {fileID: 8078452474799672849, guid: 4c202a17716cd644c8fca32ecceef5f7, type: 3}
   - {fileID: 5225676350459348702, guid: 5d8b27d9ea317404f9c8b2e158b12a8f, type: 3}
   - {fileID: 8708587058464569943, guid: f470c027193ad9e41969d33cf6936f7c, type: 3}
+  - {fileID: 3060966109115150971, guid: 142aa1a4c45b0af4596e0113d6a34c80, type: 3}
 --- !u!4 &444901767
 Transform:
   m_ObjectHideFlags: 0
@@ -25122,7 +25123,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8942465722225696813, guid: 3727d9a1370a7c849858ddb7907f0d10, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3727d9a1370a7c849858ddb7907f0d10, type: 3}
 --- !u!4 &880645999 stripped
 Transform:

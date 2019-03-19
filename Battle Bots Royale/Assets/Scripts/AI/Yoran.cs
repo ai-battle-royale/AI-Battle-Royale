@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Yoran : MonoBehaviour {
+public class Yoran : MonoBehaviour
+{
 
     Vector3 direction;
     BattleBotInterface Controller;
@@ -13,21 +14,25 @@ public class Yoran : MonoBehaviour {
 
     Dictionary<string, int> weaponWeights = new Dictionary<string, int> {
         {"heavy",6 },
-        {"rifle", 5},
-        {"pistol", 4},
+        {"sniper",5 },
+        {"rifle", 4},
+        {"pistol", 3},
         {"fists", 0}
     };
 
-    void Start()  {
+    void Start()
+    {
         Controller = GetComponent<BattleBotInterface>();
 
         direction = new Vector3(Random.value, 0, Random.value);
     }
 
-    void Update() {
+    void Update()
+    {
         angleOffset += Mathf.PI / 32;
 
-        if (angleOffset > Mathf.PI / 8) {
+        if (angleOffset > Mathf.PI / 8)
+        {
             angleOffset = 0;
         }
 
@@ -40,7 +45,8 @@ public class Yoran : MonoBehaviour {
             direction = (Controller.NextRingCenter - transform.position).normalized;
         }
 
-        for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 8) {
+        for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 8)
+        {
             var dir = new Vector3(Mathf.Cos(i + angleOffset), 0, Mathf.Sin(i + angleOffset));
             var scan = Controller.Scan(dir);
 
@@ -127,8 +133,10 @@ public class Yoran : MonoBehaviour {
             direction = (Controller.RingCenter - transform.position).normalized;
         }
 
-        if (pickupTarget != null) {
-            if (isPickingUpItem && Vector3.Distance(pickupTarget.transform.position, transform.position) < GameManager.instance.pickupRange) {
+        if (pickupTarget != null)
+        {
+            if (isPickingUpItem && Vector3.Distance(pickupTarget.transform.position, transform.position) < GameManager.instance.pickupRange)
+            {
                 Controller.Pickup(pickupTarget);
             }
         }
