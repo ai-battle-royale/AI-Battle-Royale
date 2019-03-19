@@ -31,7 +31,7 @@ public class Weapon : OwnedObject {
     /// Gets called when the weapon hits an enemy in the default Shoot() method.
     /// </summary>
     public virtual void OnHit(BattleBotInterface enemy) {
-        enemy.TakeDamage(damage);
+        enemy.TakeDamage(damage, controller);
     }
 
     /// <summary>

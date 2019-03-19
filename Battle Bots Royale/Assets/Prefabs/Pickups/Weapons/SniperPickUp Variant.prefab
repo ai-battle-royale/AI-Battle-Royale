@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 1159610885817900042, guid: fc8c869f911464a4497f27dd67e23b31,
         type: 3}
       propertyPath: m_Name
-      value: SniperPickUp
+      value: SniperPickUp Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8142025342207997081, guid: fc8c869f911464a4497f27dd67e23b31,
         type: 3}
@@ -67,6 +67,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4372816425848089740, guid: fc8c869f911464a4497f27dd67e23b31,
+        type: 3}
+      propertyPath: weapon
+      value: 
+      objectReference: {fileID: 11400000, guid: e448639fa281e684c81399de1e25555d,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc8c869f911464a4497f27dd67e23b31, type: 3}
 --- !u!4 &5373699702866991848 stripped
