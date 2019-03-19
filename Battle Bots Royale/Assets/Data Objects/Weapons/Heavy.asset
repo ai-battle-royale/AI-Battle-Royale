@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a0547baac4836642a4405354775c111, type: 3}
+  m_Name: Heavy
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  controller: {fileID: 0}
+  name: Heavy
+  pickupPrefab: {fileID: 8708587058464569943, guid: f470c027193ad9e41969d33cf6936f7c,
+    type: 3}
+  prefab: {fileID: 100014, guid: b88c25b0e3f5dc244a103762c420b299, type: 3}
+  ammoType: 1
+  damage: 10
+  range: 8
+  baseAmmo: 99999999
+  fireDelay: 0.1
+  precision: 10
+  prefabInstance: {fileID: 0}

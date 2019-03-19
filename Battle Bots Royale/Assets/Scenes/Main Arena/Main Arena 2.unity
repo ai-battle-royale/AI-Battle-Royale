@@ -13861,6 +13861,7 @@ MonoBehaviour:
   spawnableWeaponPickups:
   - {fileID: 8078452474799672849, guid: 4c202a17716cd644c8fca32ecceef5f7, type: 3}
   - {fileID: 5225676350459348702, guid: 5d8b27d9ea317404f9c8b2e158b12a8f, type: 3}
+  - {fileID: 8708587058464569943, guid: f470c027193ad9e41969d33cf6936f7c, type: 3}
 --- !u!4 &444901767
 Transform:
   m_ObjectHideFlags: 0
@@ -65720,6 +65721,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1745216628}
+    - target: {fileID: 8644670410327397748, guid: 1ee3c1e8440fc7146afa71910f693a02,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ee3c1e8440fc7146afa71910f693a02, type: 3}
 --- !u!4 &6510711594782435103 stripped
