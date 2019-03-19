@@ -22,31 +22,39 @@ public class Geert : MonoBehaviour
         var healingItem = BotInterface.FindItem<HealingItem>();
         var armorItem = BotInterface.FindItem<ArmorItem>();
 
-        if (!BotInterface.IsInNextRing)
-        {
-            direction = (BotInterface.NextRingCenter - transform.position).normalized;
-        }
 
-        for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 8)
+
+        for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 16)
         {
             var dir = new Vector3(Mathf.Cos(i), 0, Mathf.Sin(i));
             var scan = BotInterface.Scan(dir);
 
-  
+            if (!BotInterface.IsInNextRing)
+            {
+
+                if (scan.type == HitType.World)
+                {
+                    direction = Vector3.Slerp(direction, -dir, 100 - (scan.distance / GameManager.instance.maxLookDistance));
+                }
+                else
+                {
+                    direction = (BotInterface.NextRingCenter - transform.position).normalized;
+                }
+            }
+
             if (scan.type == HitType.World)
             {
-                if (scan.distance < 1)
+                if (scan.distance < 3)
                 {
                     direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
                 }
             }
+
             else if (scan.type == HitType.Enemy)
             {
 
                 BotInterface.Shoot(dir);
-                direction = scan.distance > 1f ? dir : -dir;
-
-
+                direction = scan.distance > BotInterface.weapon.range / 1 ? dir : -dir;
 
                 break;
             }
@@ -79,7 +87,9 @@ public class Geert : MonoBehaviour
         {
             BotInterface.UseItem(armorItem);
         }
+
         BotInterface.Move(direction);
+
 
     }
 }
