@@ -25,7 +25,7 @@ public class Tomas : MonoBehaviour
     {
         var healingItem = Manager.FindItem<HealingItem>();
         var armorItem = Manager.FindItem<ArmorItem>();
-        safe = true;
+
 
         //casting raycasts around the bot 
         for (var i = 0f; i < Mathf.PI * 2; i += Mathf.PI / 8)
@@ -51,6 +51,7 @@ public class Tomas : MonoBehaviour
             if (scan.type == HitType.World)
             {
                 direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                safe = true;
             }
             //if the enemy is near the bot shoots
             else if (enemy)
