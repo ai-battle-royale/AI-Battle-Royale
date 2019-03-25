@@ -34,14 +34,19 @@ public class Tomas : MonoBehaviour
             var scan = Manager.Scan(dir);
 
             var enemy = scan.type == HitType.Enemy;
-            if (!Manager.IsInNextRing)
+
+            if (countHealthItems > 0 && countArmorItems > 0 || Manager.armor >= 20)
             {
-                direction = (Manager.NextRingCenter - transform.position).normalized;
-                if (scan.type == HitType.World)
+                if (!Manager.IsInNextRing)
                 {
-                    direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                    direction = (Manager.NextRingCenter - transform.position).normalized;
+                    if (scan.type == HitType.World)
+                    {
+                        direction = Vector3.Slerp(direction, -dir, 1 - (scan.distance / GameManager.instance.maxLookDistance));
+                    }
                 }
             }
+            
             //avoid collisions by moving to another direction
             if (scan.type == HitType.World)
             {
@@ -106,9 +111,10 @@ public class Tomas : MonoBehaviour
         Manager.Move(direction);
 
     }
+
     void WhatToUse(ArmorItem armorItem, HealingItem healingItem)
     {
-        if (Manager.armor <= 0 && safe == true || Manager.armor <= 70 && safe == true )
+        if (Manager.armor <= 0 && safe == true || Manager.armor <= 60 && safe == true )
         {
             Manager.UseItem(armorItem);
         }
