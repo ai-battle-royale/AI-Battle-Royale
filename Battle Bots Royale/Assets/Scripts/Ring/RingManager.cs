@@ -66,7 +66,7 @@ public class RingManager : MonoBehaviour
                 var distance = Vector3.Distance(bot.transform.position, Vector3.Scale(ring.transform.position, new Vector3(1, 0, 1)));
 
                 if (distance > currentRingState.radius)
-                    bot.TakeDamage(currentRingState.damage);
+                    bot.TakeDamageToHealth(currentRingState.damage);
             }
         }
     }

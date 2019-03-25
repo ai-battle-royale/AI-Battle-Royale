@@ -101,6 +101,27 @@ public class BattleBotInterface : MonoBehaviour {
         }
     }
 
+    public void TakeDamageToHealth (float amount, BattleBotInterface instigator = null)
+    {
+        health = Mathf.Max(0, health - amount);
+
+        if (health == 0)
+        {
+
+            if (instigator != null)
+            {
+                print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
+            }
+            else
+            {
+                print($"'{gameObject.name} died!");
+            }
+
+            Destroy(gameObject);
+            Destroy(labelObject.gameObject);
+        }
+    }
+
     /// <summary>
     /// Checks if the BattleBot has an item of type T
     /// </summary>
