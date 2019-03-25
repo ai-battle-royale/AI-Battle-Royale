@@ -201,6 +201,8 @@ public class BattleBotInterface : MonoBehaviour {
     /// Makes the BattleBot move in the given direction.
     /// </summary>
     public void Move (Vector3 direction) {
+        direction = direction.normalized;
+
         if (IsUsingItem)
         {
             rigidbodyController.Stop();
