@@ -9,7 +9,7 @@ public class Tomas : MonoBehaviour
     Pickup pickupTarget;
     int countHealthItems = 0 ;
     int countArmorItems = 0 ;
-    bool safe;
+    public bool safe;
 
 
     // Start is called before the first frame update
