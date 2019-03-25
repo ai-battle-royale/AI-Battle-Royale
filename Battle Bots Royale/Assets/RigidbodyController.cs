@@ -28,7 +28,7 @@ public class RigidbodyController : MonoBehaviour
 
     public void Move(Vector3 moveVector)
     {
-        direction = direction.normalized;
+        moveVector = moveVector.normalized;
 
         desiredMoveVector = moveVector * GameManager.instance.moveSpeed;
     }
