@@ -27,6 +27,7 @@ public class BattleBotInterface : MonoBehaviour {
     public Weapon weapon;
     public Transform weaponHolder;
     public List<Item> items = new List<Item>();
+    public GameObject projectilePrefab;
 
     [ReadOnly] public float health;
     [ReadOnly] public float armor;

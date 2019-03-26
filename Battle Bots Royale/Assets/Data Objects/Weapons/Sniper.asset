@@ -19,9 +19,11 @@ MonoBehaviour:
     type: 3}
   prefab: {fileID: 3218997641883398437, guid: de3867ec3861ae24a867ae9139d76738, type: 3}
   ammoType: 1
-  damage: 50
+  damage: 40
   range: 50
   baseAmmo: 999999999
   fireDelay: 5
   precision: 0
+  projectilePrefab: {fileID: 7360978936258362262, guid: 723559458744edf469127daf75e590a6,
+    type: 3}
   prefabInstance: {fileID: 0}

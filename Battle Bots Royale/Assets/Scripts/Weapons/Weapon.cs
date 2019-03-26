@@ -14,6 +14,7 @@ public class Weapon : OwnedObject {
     public int baseAmmo;
     public float fireDelay;
     public float precision;
+    public GameObject projectilePrefab;
     [HideInInspector] public GameObject prefabInstance;
 
     public int Ammo { get; set;  }
@@ -53,16 +54,26 @@ public class Weapon : OwnedObject {
             var debugLineColor = Color.cyan;
             var debugLineEnd = owner.transform.position + direction * range;
 
-            if (Physics.Raycast(owner.transform.position + direction, direction, out RaycastHit hit, range)) {
-                debugLineEnd = hit.point;
+            if (projectilePrefab == null) {
+                if (Physics.Raycast(owner.transform.position + direction, direction, out RaycastHit hit, range)) {
+                    debugLineEnd = hit.point;
 
-                var enemy = hit.collider.gameObject?.GetComponent<BattleBotInterface>();
+                    var enemy = hit.collider.gameObject?.GetComponent<BattleBotInterface>();
 
-                if (enemy != null) {
-                    OnHit(enemy);
+                    if (enemy != null) {
+                        OnHit(enemy);
 
-                    debugLineColor = Color.yellow;
+                        debugLineColor = Color.yellow;
+                    }
                 }
+            } else {
+                var projectileObject = Instantiate(projectilePrefab, owner.transform.position + direction, Quaternion.LookRotation(direction));
+                var projectile = projectileObject.GetComponent<Projectile>();
+
+                projectile.range = range;
+                projectile.damage = damage;
+
+                projectile.Fire(direction);
             }
 
             Debug.DrawLine(owner.transform.position, debugLineEnd, debugLineColor, 5f);
