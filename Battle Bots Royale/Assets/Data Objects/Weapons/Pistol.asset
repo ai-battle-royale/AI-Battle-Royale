@@ -24,4 +24,6 @@ MonoBehaviour:
   baseAmmo: 0
   fireDelay: 0.6
   precision: 3
+  projectilePrefab: {fileID: 7360978936258362262, guid: 723559458744edf469127daf75e590a6,
+    type: 3}
   prefabInstance: {fileID: 0}

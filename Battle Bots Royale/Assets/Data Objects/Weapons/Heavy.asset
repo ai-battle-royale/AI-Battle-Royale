@@ -17,11 +17,13 @@ MonoBehaviour:
   weaponName: heavy
   pickupPrefab: {fileID: 8708587058464569943, guid: f470c027193ad9e41969d33cf6936f7c,
     type: 3}
-  prefab: {fileID: 100014, guid: b88c25b0e3f5dc244a103762c420b299, type: 3}
+  prefab: {fileID: 3778929529178618295, guid: 106085bd9f1a7c042b3f2942d7bb82b3, type: 3}
   ammoType: 1
   damage: 10
   range: 8
   baseAmmo: 99999999
   fireDelay: 0.1
   precision: 10
+  projectilePrefab: {fileID: 7360978936258362262, guid: 723559458744edf469127daf75e590a6,
+    type: 3}
   prefabInstance: {fileID: 0}
