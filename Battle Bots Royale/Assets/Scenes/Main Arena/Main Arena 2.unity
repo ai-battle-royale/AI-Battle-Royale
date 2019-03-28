@@ -36085,7 +36085,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-15648
+  m_Name: pb_Mesh-24524
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -64516,6 +64516,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1197604006}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: armorThreshold
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6271bed45cd5fcd4da00647c58ce0082, type: 3}
 --- !u!1001 &5038338874818864213

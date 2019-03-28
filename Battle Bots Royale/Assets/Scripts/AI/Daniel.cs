@@ -188,7 +188,6 @@ public class Daniel : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float maxDistanceToNextRing = 75f;
-    [SerializeField] private float maxDistanceOutsideOfRing = 10f;
 
     [Header("Prioritiy Bonuses")]
     [SerializeField] private int desirePriorityBonus = 1;
@@ -471,15 +470,13 @@ public class Daniel : MonoBehaviour
     }
     bool CheckInsideRingDistanceTreshold()
     {
-        var distanceToRingCenter = Vector3.Distance(transform.position, bot.RingCenter);
         var distanceToNextRingCenter = Vector3.Distance(transform.position, bot.NextRingCenter);
         /*print($"Current distance to ring: {distanceToRingCenter-maxDistanceOutsideOfRing} vs {bot.RingRadius}" +
             $"\n| Distance to next ring: {distanceToNextRingCenter-maxDistanceToNextRing} vs {bot.NextRingRadius}");
             */
-        var isInRingThreshold = distanceToRingCenter - maxDistanceOutsideOfRing < bot.RingRadius;
         var isInNextRingThreshold = distanceToNextRingCenter - maxDistanceToNextRing < bot.NextRingRadius;
 
-        return (bot.IsInRing || isInRingThreshold) && (bot.IsInNextRing || isInNextRingThreshold);
+        return bot.IsInRing && (bot.IsInNextRing || isInNextRingThreshold);
     }
     bool CheckHeldHealItems()
     {
