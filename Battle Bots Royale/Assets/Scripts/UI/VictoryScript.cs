@@ -9,7 +9,7 @@ public class VictoryScript : MonoBehaviour
     Text text;
     GameObject[] bots;
     public GameObject victoryText;
-    public GameObject killText;
+    //public GameObject killText;
     BattleBotInterface manager;
     
     
@@ -18,7 +18,7 @@ public class VictoryScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        text = killText.GetComponent<Text>();
+        //text = killText.GetComponent<Text>();
         victoryText.SetActive(false);
         bots = GameObject.FindGameObjectsWithTag("Bot");
     }
@@ -34,13 +34,13 @@ public class VictoryScript : MonoBehaviour
             //victoryText.GetComponent<Renderer>().material.
         }
         Debug.Log(bots.Length);
-        foreach (GameObject bot in bots)
+        /*foreach (GameObject bot in bots)
         {
             manager = bot.GetComponent<BattleBotInterface>();
             if (manager.health == 0)
             {
                 text.text = "LOL";
             }
-        }
+        }*/
     }
 }

@@ -46,6 +46,8 @@ public class BattleBotInterface : MonoBehaviour {
     private RectTransform labelObject;
     private Item lastUsedItem;
 
+    public string killer;
+
     void CreateLabel () {
         var canvas = GameObject.FindGameObjectWithTag("Canvas");
 
@@ -90,6 +92,7 @@ public class BattleBotInterface : MonoBehaviour {
 
             if (instigator != null)
             {
+                killer = instigator.name;
                 print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
             } else
             {
