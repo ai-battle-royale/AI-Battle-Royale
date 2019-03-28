@@ -87,34 +87,23 @@ public class BattleBotInterface : MonoBehaviour {
         armor = Mathf.Max(0, armor - amount);
         health = Mathf.Max(0, health - damageToHealth);
 
-        if (health == 0) {
-
-            if (instigator != null)
-            {
-                print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
-            } else
-            {
-                print($"'{gameObject.name} died!");
-            }
-
-            Destroy(gameObject);
-            Destroy(labelObject.gameObject);
-        }
+        HealthCheck(instigator);
     }
 
     public void TakeDamageToHealth (float amount, BattleBotInterface instigator = null)
     {
         health = Mathf.Max(0, health - amount);
 
-        if (health == 0)
-        {
+        HealthCheck(instigator);
+    }
 
-            if (instigator != null)
-            {
+    private void HealthCheck (BattleBotInterface instigator = null) {
+        if (health == 0) {
+
+            if (instigator != null) {
                 print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
             }
-            else
-            {
+            else {
                 print($"'{gameObject.name} died!");
             }
 

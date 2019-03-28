@@ -46,9 +46,9 @@ public class Projectile : MonoBehaviour
 
             if (enemy != null) {
                 enemy.TakeDamage(damage);
-
-                Destroy(gameObject);
             }
+
+            Destroy(gameObject);
         } else {
             pos += velocity * Time.fixedDeltaTime / timeSteps;
         }
