@@ -173,11 +173,11 @@ public class BattleBotInterface : MonoBehaviour {
     /// Scans for objects in the given layermask and returns a ScanInfo result.
     /// </summary>
     /// <returns>A ScanInfo result.</returns>
-    public ScanInfo Scan (Vector3 direction, LayerMask mask = default) {
+    public ScanInfo Scan (Vector3 direction, LayerMask mask = default, bool drawDebug = false) {
         if (mask == default) mask = LayerMask.NameToLayer("Everything");
 
         if (Physics.Raycast(transform.position, direction, out RaycastHit hit, LookRange, mask)) {
-            Debug.DrawLine(transform.position, hit.point, Color.red);
+            if (drawDebug) Debug.DrawLine(transform.position, hit.point, Color.red);
 
             var hitType = HitType.World;
 
@@ -196,7 +196,7 @@ public class BattleBotInterface : MonoBehaviour {
             return new ScanInfo(pickup, hit.distance, hitType);
         }
         else {
-            Debug.DrawLine(transform.position, transform.position + direction * LookRange, Color.green);
+            if (drawDebug) Debug.DrawLine(transform.position, transform.position + direction * LookRange, Color.green);
 
             return new ScanInfo(null, LookRange, HitType.None);
         }
