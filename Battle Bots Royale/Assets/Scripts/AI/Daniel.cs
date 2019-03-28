@@ -208,6 +208,7 @@ public class Daniel : MonoBehaviour
     [ReadOnly, SerializeField] Vector3 currentDirection;
     [ReadOnly, SerializeField] bool avoidObstacle;
     [ReadOnly, SerializeField] Vector3 desiredPosition;
+    [ReadOnly, SerializeField] Vector3 lastDesiredPosition;
     [ReadOnly, SerializeField] Vector3 explorePosition;
     [ReadOnly, SerializeField] float newExploreLocationTimestamp;
     [ReadOnly, SerializeField] bool lootSurroundings;
@@ -244,7 +245,7 @@ public class Daniel : MonoBehaviour
 
     [ReadOnly, SerializeField] List<EnemyInfo>  lastKnowEnemyBots;     // Needs health/dmg tracking & player assosiation
     [ReadOnly, SerializeField] List<PickupInfo> lastKnowItemPickups;      // needs item assosiation
-    [ReadOnly, SerializeField] List<PickupInfo> lastKnowWeaponPickups;   // needs weapon type assosiation
+    [ReadOnly, SerializeField] List<PickupInfo> knowWeaponPickups;   // needs weapon type assosiation
 
     [Header("Urges")]
     [ReadOnly, SerializeField] bool lookingForHealth;
@@ -268,6 +269,7 @@ public class Daniel : MonoBehaviour
     void ResetBrain()
     {
         desiredDirection    = Vector3.zero;
+        desiredDirection    = Vector3.negativeInfinity;
 
         avoidObstacle       = false;
         currentDirection    = Vector3.zero;
@@ -275,7 +277,7 @@ public class Daniel : MonoBehaviour
         desiredPosition     = transform.position;
         desiredPosition     = Vector3.zero;
         explorePosition     = Vector3.negativeInfinity;
-        newExploreLocationTimestamp         = 0;
+        newExploreLocationTimestamp = 0;
         lootSurroundings    = false;
 
         kills               = 0;
@@ -312,7 +314,7 @@ public class Daniel : MonoBehaviour
         {
             lastKnowEnemyBots           = new List<EnemyInfo>();
             lastKnowItemPickups         = new List<PickupInfo>();
-            lastKnowWeaponPickups       = new List<PickupInfo>();
+            knowWeaponPickups       = new List<PickupInfo>();
         }
     }
 
@@ -353,6 +355,7 @@ public class Daniel : MonoBehaviour
             new Priority(PriorityType.Center,  centerPriority)
         };
 
+        // Highest to lowest
         priorities.Sort((x, y) => y.Value.CompareTo(x.Value));
     }
     void ApplyDesirePriorities()
@@ -545,7 +548,6 @@ public class Daniel : MonoBehaviour
             var scan = bot.Scan(direction, layerMask);
             scans.Add(new AdvancedScanInfo(scan, direction));
         }
-
         return scans;
     }
 
@@ -635,7 +637,7 @@ public class Daniel : MonoBehaviour
                     IsPickupMemorized(pickupInfo.Pickup, pickupInfo.Type, true);
                 }
 
-                if (remember) lastKnowWeaponPickups.Add(pickupInfo);
+                if (remember) knowWeaponPickups.Add(pickupInfo);
                 break;
 
             case PickupType.HealingConsumable:
@@ -664,15 +666,15 @@ public class Daniel : MonoBehaviour
         switch (type)
         {
             case PickupType.Weapon:
-                if (lastKnowWeaponPickups?.Count > 0)
+                if (knowWeaponPickups?.Count > 0)
                 {
-                    var memorizedInfo = lastKnowWeaponPickups?.Find(x => x.Pickup == pickup);
+                    var memorizedInfo = knowWeaponPickups?.Find(x => x.Pickup == pickup);
                     //print($"Trying to remember {pickupInfo.Pickup.name}: {memorizedInfo?.Pickup?.name}");
 
                     if (removeFromMemory && memorizedInfo != null)
                     {
                         //print("Updating memory");
-                        lastKnowWeaponPickups.Remove(memorizedInfo);
+                        knowWeaponPickups.Remove(memorizedInfo);
                     }
                     return memorizedInfo != null;
                 }
@@ -803,9 +805,11 @@ public class Daniel : MonoBehaviour
             if (isPrioritized) break;
         }
 
-        desiredDirection = desiredPosition - transform.position;
-        desiredDirection.y = 0; // lock direction to 2d
-        currentDirection = desiredDirection;
+        if (lastDesiredPosition != desiredPosition)
+        {
+            lastDesiredPosition = desiredPosition;
+            UpdateDesiredDirection();
+        }
 
         Debug_MarkPosition(desiredPosition, Color.yellow);
 
@@ -824,6 +828,14 @@ public class Daniel : MonoBehaviour
         Debug.DrawLine(transform.position, transform.position + desiredDirection.normalized * 2, Color.yellow);
     }
 
+    private void UpdateDesiredDirection()
+    {
+        desiredDirection = desiredPosition - transform.position;
+        desiredDirection.y = 0; // lock direction to 2d
+
+        currentDirection = desiredDirection;
+    }
+
     private void AvoidBlockingObstacles()
     {
         obstaclesInFront = new List<ObstacleInfo>();
@@ -832,12 +844,13 @@ public class Daniel : MonoBehaviour
 
         // Is there anything in front of that needs to be avoided?
         var frontScan = bot.Scan(currentDirection, layerMask, true);
-        if (frontScan.type == HitType.World && frontScan.distance == obstacleAvoidanceRadius)
+        if (frontScan.type == HitType.World && frontScan.distance <= obstacleAvoidanceRadius)
         {
             obstaclesInFront.Add(new ObstacleInfo(transform.position + currentDirection * frontScan.distance, frontScan.distance));
         }
         else
         {
+            UpdateDesiredDirection();
             return;
         }
         
@@ -865,8 +878,10 @@ public class Daniel : MonoBehaviour
         }
 
         // Couldn't find an unbocked alternative, so go in the direction with the highest distance to obstacle
-        obstaclesInFront.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+        obstaclesInFront.Sort((x, y) => y.Distance.CompareTo(x.Distance));
         currentDirection = obstaclesInFront[0].Position - transform.position;
+
+        //AvoidBlockingObstacles();
     }
 
     bool MoveTowardsWeapon()
@@ -879,10 +894,10 @@ public class Daniel : MonoBehaviour
             Log("M Weapon");
             return true;
         }
-        else if (lastKnowWeaponPickups?.Count > 0)
+        else if (knowWeaponPickups?.Count > 0)
         {
-            lastKnowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
-            desiredPosition = lastKnowWeaponPickups[0].Pickup.transform.position;
+            knowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = knowWeaponPickups[0].Pickup.transform.position;
             Log("M Weapon");
             return true;
         }
@@ -905,8 +920,8 @@ public class Daniel : MonoBehaviour
         var knownArmorInfos = lastKnowItemPickups.FindAll(x => x.Type == PickupType.ArmorConsumable);
         if (knownArmorInfos?.Count > 0)
         {
-            lastKnowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
-            desiredPosition = lastKnowWeaponPickups[0].Pickup.transform.position;
+            knownArmorInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = knownArmorInfos[0].Pickup.transform.position;
             Log("M Armor");
             return true;
         }
@@ -928,8 +943,8 @@ public class Daniel : MonoBehaviour
         var knownHealInfos = lastKnowItemPickups.FindAll(x => x.Type == PickupType.HealingConsumable);
         if (knownHealInfos?.Count > 0)
         {
-            lastKnowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
-            desiredPosition = lastKnowWeaponPickups[0].Pickup.transform.position;
+            knownHealInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
+            desiredPosition = knownHealInfos[0].Pickup.transform.position;
             Log("M Heal");
             return true;
         }
@@ -995,6 +1010,10 @@ public class Daniel : MonoBehaviour
     {
         var random = (Random.insideUnitCircle - Vector2.one / 2f) * bot.RingRadius;
         var possibleLocation = bot.RingCenter + new Vector3(random.x, 0, random.y);
+
+        possibleLocation.x = Mathf.Clamp(possibleLocation.x, -97f, 97f);
+        possibleLocation.z = Mathf.Clamp(possibleLocation.z, -97f, 97f);
+
         return possibleLocation;
     }
 
