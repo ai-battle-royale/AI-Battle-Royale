@@ -73,7 +73,7 @@ public class Weapon : OwnedObject {
                 projectile.range = range;
                 projectile.damage = damage;
 
-                projectile.Fire(direction);
+                projectile.Fire(direction, controller);
             }
 
             Debug.DrawLine(owner.transform.position, debugLineEnd, debugLineColor, 5f);

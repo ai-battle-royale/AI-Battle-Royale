@@ -82,6 +82,7 @@ public class BattleBotInterface : MonoBehaviour {
     /// Damages the BattleBot's armor and health
     /// </summary>
     public void TakeDamage (float amount, BattleBotInterface instigator = null) {
+
         // How much damage will be subtracted from the health value.
         var damageToHealth = Mathf.Max(0, amount - armor);
 

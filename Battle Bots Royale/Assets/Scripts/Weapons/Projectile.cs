@@ -17,8 +17,11 @@ public class Projectile : MonoBehaviour
     private Vector3 position;
     private Vector3 velocity;
 
-    public void Fire (Vector3 direction) {
+    private BattleBotInterface owner;
+
+    public void Fire (Vector3 direction, BattleBotInterface instigator) {
         position = transform.position;
+        owner = instigator;
         velocity = direction * startVelocity;
 
         StartCoroutine(DestroyAfterLifeTime(range / startVelocity));
@@ -45,7 +48,7 @@ public class Projectile : MonoBehaviour
             var enemy = hit.collider.gameObject?.GetComponent<BattleBotInterface>();
 
             if (enemy != null) {
-                enemy.TakeDamage(damage);
+                enemy.TakeDamage(damage, owner);
             }
 
             Destroy(gameObject);
