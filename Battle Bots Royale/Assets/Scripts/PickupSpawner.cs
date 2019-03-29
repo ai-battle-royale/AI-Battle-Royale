@@ -36,7 +36,7 @@ public class PickupSpawner : MonoBehaviour
 
             for (int i = 0; i < playerPrefabs.Length; i++)
             {
-                Spawn(playerPrefabs[i], true);
+                Spawn(playerPrefabs[i], true, 10f);
             }
         }
 
@@ -65,11 +65,11 @@ public class PickupSpawner : MonoBehaviour
         yield return null;
     }
 
-    private void Spawn(GameObject prefab, bool moveInstead = false)
+    private void Spawn(GameObject prefab, bool moveInstead = false, float yOffset = 0f)
     {
         while (true)
         {
-            Vector3 spawnPoint = new Vector3(Random.Range(spawnArea.xMin, spawnArea.xMax), 0, Random.Range(spawnArea.yMin, spawnArea.yMax));
+            Vector3 spawnPoint = new Vector3(Random.Range(spawnArea.xMin, spawnArea.xMax), yOffset, Random.Range(spawnArea.yMin, spawnArea.yMax));
             if (prefab != null && !Physics.SphereCast(spawnPoint, 1, Vector3.up, out RaycastHit hit, 0, LayerMask.NameToLayer("Ground")))
             {
                 if (!moveInstead)

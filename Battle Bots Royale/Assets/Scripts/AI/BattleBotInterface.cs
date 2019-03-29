@@ -103,6 +103,7 @@ public class BattleBotInterface : MonoBehaviour {
                 print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
             } else
             {
+                BattleBotEvents.OnBotKilledBot(null, this);
                 print($"'{gameObject.name} died!");
             }
 

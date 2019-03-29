@@ -18,6 +18,4 @@ public class BattleBotEvents : MonoBehaviour
     {
         if (BotKilledBot != null) BotKilledBot.Invoke(instigator, receiver);
     }
-
-
 }

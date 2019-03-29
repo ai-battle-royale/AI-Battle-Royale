@@ -85,6 +85,8 @@ public class EventCameraManager : MonoBehaviour
         {
             isEventCameraActive = !isEventCameraActive;
         }
+
+        
     }
 
     void UpdateTargetGroupWeight(bool reset = false)

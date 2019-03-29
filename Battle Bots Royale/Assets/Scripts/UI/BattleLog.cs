@@ -105,7 +105,8 @@ public class BattleLog : MonoBehaviour
 
     private void BattleBotEvents_BotKilledBot(BattleBotInterface instigator, BattleBotInterface receiver)
     {
-        KilledBot(receiver.name, instigator.name);
+        if (instigator != null) KilledBot(receiver.name, instigator.name);
+        else Died(receiver.name);
     }
 
     void KilledBot(string receiverName, string killerName)
