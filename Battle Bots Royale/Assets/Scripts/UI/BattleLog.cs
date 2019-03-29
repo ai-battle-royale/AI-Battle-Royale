@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Random = UnityEngine.Random;
 
 public class BattleLog : MonoBehaviour
 {
@@ -11,10 +12,41 @@ public class BattleLog : MonoBehaviour
     Text text;
     public float moveAmount;
     public float moveSpeed;
+    public float ttl = 4f;
     Vector3 moveDirection;
     bool canMove;
     string botName;
     Vector3 originalPos;
+    string[] killMoveMessages =
+    {
+        "killed",
+        "deleted",
+        "obliterated",
+        "set a null pointer to",
+        "evaporated",
+        "removed",
+        "destroyed",
+        "annihilated",
+        "used his death stare on",
+        "murdered",
+        "slaughtered",
+        "erased",
+        "360 noscoped",
+        "ran over",
+        "finished",
+        "demolished",
+        "pulled a lag switch on",
+        "massacred",
+        "phaser po paser laserd",
+        "shot",
+        "brutalized",
+        "oofed",
+        "pull a quick one on",
+        "pulled the plug on",
+        "did some heavy damage to"
+        //"used bdsm without a safe word",
+        //"didn't use protection on"
+    };
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +60,15 @@ public class BattleLog : MonoBehaviour
         bots = GameObject.FindGameObjectsWithTag("Bot");
     }
 
+    private void OnEnable()
+    {
+        BattleBotEvents.BotKilledBot += BattleBotEvents_BotKilledBot; ;
+    }
+    private void OnDisable()
+    {
+        BattleBotEvents.BotKilledBot -= BattleBotEvents_BotKilledBot;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -36,7 +77,7 @@ public class BattleLog : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, transform.position + moveDirection, moveAmount * (moveSpeed * Time.deltaTime));
         }
 
-        foreach (GameObject bot in bots)
+        /*foreach (GameObject bot in bots)
         {
             if (bot != null)
             {
@@ -59,19 +100,27 @@ public class BattleLog : MonoBehaviour
                     
                 }
             }
-        }
+        }*/
     }
 
-    void KilledBot(string textString, string killer)
+    private void BattleBotEvents_BotKilledBot(BattleBotInterface instigator, BattleBotInterface receiver)
+    {
+        KilledBot(receiver.name, instigator.name);
+    }
+
+    void KilledBot(string receiverName, string killerName)
     {
         canMove = true;
-        text.text += "<color=green>" + "<b>" + textString + "</b>" + "</color>" +" was killed by " + "<color=red>" + "<b>" + killer + "</b>" + "</color>";
-        Invoke("ClearText", 2f);
+        text.text += "<color=green>" + "<b>" + killerName + "</b>" + "</color> "
+            + killMoveMessages[Random.Range(0, killMoveMessages.Length)]
+            + " <color=red>" + "<b>" + receiverName + "</b>" + "</color>";
+
+        Invoke("ClearText", ttl);
     }
     void Died(string bot)
     {
         text.text += bot;
-        Invoke("ClearText", 2f);
+        Invoke("ClearText", ttl);
     }
     void ClearText()
     {

@@ -73,7 +73,7 @@ public class BattleBotInterface : MonoBehaviour {
         if (labelObject != null)
         {
             labelObject.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, 50, 0);
-
+            labelObject.gameObject.SetActive(labelObject.position.z > 0);
             botLabel.SetSliders(health / 100, armor / 100);
         }
     }
@@ -82,6 +82,11 @@ public class BattleBotInterface : MonoBehaviour {
     /// Damages the BattleBot's armor and health
     /// </summary>
     public void TakeDamage (float amount, BattleBotInterface instigator = null) {
+
+        if (health == 0) return;
+
+        // Call damage event
+        BattleBotEvents.OnBotDealtDamageToBot(instigator, this, amount);
 
         // How much damage will be subtracted from the health value.
         var damageToHealth = Mathf.Max(0, amount - armor);
@@ -94,6 +99,7 @@ public class BattleBotInterface : MonoBehaviour {
             if (instigator != null)
             {
                 killer = instigator.name;
+                BattleBotEvents.OnBotKilledBot(instigator, this);
                 print($"'{instigator.gameObject.name}' killed {gameObject.name}!");
             } else
             {

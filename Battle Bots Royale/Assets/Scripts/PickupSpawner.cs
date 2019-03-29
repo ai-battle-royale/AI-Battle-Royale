@@ -15,6 +15,7 @@ public class PickupSpawner : MonoBehaviour
 
     public GameObject[] spawnableItemPickups;
     public GameObject[] spawnableWeaponPickups;
+    public GameObject[] playerPrefabs; // we wanted random spawn points and the pickup spawner fits the solution perfectly
 
     float elapsedTime = 0;
 
@@ -31,6 +32,11 @@ public class PickupSpawner : MonoBehaviour
             for (int i = 0; i < weaponAmount; i++)
             {
                 StartCoroutine(SpawnPickup(spawnableWeaponPickups));
+            }
+
+            for (int i = 0; i < playerPrefabs.Length; i++)
+            {
+                Spawn(playerPrefabs[i], true);
             }
         }
 
@@ -55,16 +61,28 @@ public class PickupSpawner : MonoBehaviour
 
     private IEnumerator SpawnPickup(GameObject[] spawnpool)
     {
+        Spawn(spawnpool[Random.Range(0, spawnpool.Length)]);
+        yield return null;
+    }
+
+    private void Spawn(GameObject prefab, bool moveInstead = false)
+    {
         while (true)
         {
             Vector3 spawnPoint = new Vector3(Random.Range(spawnArea.xMin, spawnArea.xMax), 0, Random.Range(spawnArea.yMin, spawnArea.yMax));
-            if (spawnpool.Length > 0 && !Physics.SphereCast(spawnPoint, 1, Vector3.up, out RaycastHit hit, 0, LayerMask.NameToLayer("Ground")))
+            if (prefab != null && !Physics.SphereCast(spawnPoint, 1, Vector3.up, out RaycastHit hit, 0, LayerMask.NameToLayer("Ground")))
             {
-                Instantiate(spawnpool[Random.Range(0, spawnpool.Length)], spawnPoint, Quaternion.identity, transform);
-                break;
+                if (!moveInstead)
+                {
+                    Instantiate(prefab, spawnPoint, Quaternion.identity, transform);
+                }
+                else
+                {
+                    prefab.transform.position = spawnPoint;
+                }
+                return;
             }
         }
-        yield return null;
     }
 
     private void OnDrawGizmos()
