@@ -52,6 +52,8 @@ public class Projectile : MonoBehaviour
             }
 
             Destroy(gameObject);
+
+            hasFired = false;
         } else {
             pos += velocity * Time.fixedDeltaTime / timeSteps;
         }
@@ -63,5 +65,9 @@ public class Projectile : MonoBehaviour
         yield return new WaitForSeconds(lifeTime);
 
         Destroy(gameObject);
+    }
+
+    IEnumerator DestroyAfter (float lifeTime) {
+
     }
 }
