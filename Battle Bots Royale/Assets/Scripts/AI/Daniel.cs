@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 
 public class Daniel : MonoBehaviour
 {
+    #region Data structures
     enum Focus
     {
         Loot,
@@ -163,9 +164,11 @@ public class Daniel : MonoBehaviour
             Type = type;
         }
     }
+    #endregion
 
     private BattleBotInterface bot;
 
+    #region Bot Behaviour Configuration fields
     [Header("-----------------")]
     [Header("Behaviour Tweaking")]
     [Header("_________________")]
@@ -198,7 +201,8 @@ public class Daniel : MonoBehaviour
     [SerializeField] private int desirePriorityBonus = 1;
     [SerializeField] private int urgePriorityBonus = 5;
     [SerializeField] private int ThresholdBonus = 6;
-
+    #endregion
+    #region Bot Brain fields
     [Header("-----------------")]
     [Header("Brain Information")]
     [Header("_________________")]
@@ -256,17 +260,15 @@ public class Daniel : MonoBehaviour
     [ReadOnly, SerializeField] bool shouldFlee;
     [ReadOnly, SerializeField] bool shouldExplore;
     [ReadOnly, SerializeField] bool shouldCenter;
-    
+    #endregion
+
     void Start()
     {
         bot = GetComponent<BattleBotInterface>();
-        currentDirection = Random.insideUnitSphere;
-        currentDirection.y = 0;
-        currentDirection.Normalize();
-
         ResetBrain();
     }
 
+    #region Resetting
     void ResetBrain()
     {
         desiredDirection    = Vector3.zero;
@@ -301,7 +303,6 @@ public class Daniel : MonoBehaviour
         shouldExplore       = false;
         shouldCenter        = false;
     }
-
     void ClearInfo(bool clearInfoMemory = false)
     {
         enemyInfos               = new List<EnemyInfo>();
@@ -318,7 +319,8 @@ public class Daniel : MonoBehaviour
             knowWeaponPickups       = new List<PickupInfo>();
         }
     }
-
+    #endregion
+    #region Prioritization
     void ClearPriorities()
     {
         weaponPriority = 0;
@@ -332,7 +334,6 @@ public class Daniel : MonoBehaviour
         centerPriority = 0;
     }
 
-    #region Action prioritization
     void RebuildPriorities()
     {
         ClearPriorities();
@@ -447,65 +448,37 @@ public class Daniel : MonoBehaviour
             armorPriority += ThresholdBonus;
         }
     }
-    #endregion
-
-    #region Checking for urges
     void CheckUrges()
     {
-        lookingForWeapon    = !CheckForEquippedWeapon();
-        lookingForHealth    = CheckHeldHealItems();
-        lookingForArmor     = CheckHeldArmorItems();
+        lookingForWeapon = !CheckForEquippedWeapon();
+        lookingForHealth = CheckHeldHealItems();
+        lookingForArmor = CheckHeldArmorItems();
 
         //TODO - Add damage check to see if under attack
         if (!lookingForWeapon && !lookingForHealth && !lookingForArmor)
         {
-            shouldFight     = true;
-            shouldFlee      = false;
+            shouldFight = true;
+            shouldFlee = false;
         }
         else
         {
-            shouldFight     = false;
-            shouldFlee      = true;
+            shouldFight = false;
+            shouldFlee = true;
         }
 
         if (CheckInsideRingDistanceTreshold())
         {
-            shouldExplore   = true;
-            shouldCenter    = false;
+            shouldExplore = true;
+            shouldCenter = false;
         }
         else
         {
-            shouldExplore   = false;
-            shouldCenter    = true;
+            shouldExplore = false;
+            shouldCenter = true;
         }
     }
-    bool CheckInsideRingDistanceTreshold()
-    {
-        var distanceToNextRingCenter = Vector3.Distance(transform.position, bot.NextRingCenter);
-        /*print($"Current distance to ring: {distanceToRingCenter-maxDistanceOutsideOfRing} vs {bot.RingRadius}" +
-            $"\n| Distance to next ring: {distanceToNextRingCenter-maxDistanceToNextRing} vs {bot.NextRingRadius}");
-            */
-        var isInNextRingThreshold = distanceToNextRingCenter - maxDistanceToNextRing < bot.NextRingRadius;
-
-        return bot.IsInRing && (bot.IsInNextRing || isInNextRingThreshold);
-    }
-    bool CheckHeldHealItems()
-    {
-        return CountHealingItems() < minAmountHealItems;
-    }
-    bool CheckHeldArmorItems()
-    {
-        return CountArmorItems() < minAmountArmorItems;
-    }
-    bool CheckForEquippedWeapon()
-    {
-        if (defaultWeapon == null)
-            defaultWeapon = bot.weapon;
-
-        return bot.weapon != null && bot.weapon != defaultWeapon;
-    }
     #endregion
-
+    #region Behaviour Loop
     void Update()
     {
         // Update behaviour base on desires, surroundings and self
@@ -517,6 +490,9 @@ public class Daniel : MonoBehaviour
         ClearInfo();
         AssignScanResults(ScanSurroundings(LayerMask.GetMask("Bot", "Pickup")));
         AssignScanResults(ScanSurroundings(~LayerMask.GetMask("Bot", "Pickup")));
+
+        // Where do I want to go? What are my priorities?
+        Move();
 
         // Act upon brain and memory
         TakeAction();
@@ -531,7 +507,8 @@ public class Daniel : MonoBehaviour
 
         RebuildPriorities();
     }
-
+    #endregion
+    #region Reconnaissance
     List<AdvancedScanInfo> ScanSurroundings(LayerMask layerMask = default)
     {
         var angleStep = 2 * Mathf.PI / rayCount;
@@ -700,48 +677,17 @@ public class Daniel : MonoBehaviour
                 return false;
         }
     }
-
+    #endregion
+    #region (Self-)Awareness
     float WeaponDPS(Weapon weapon)
     {
         // TODO integrate desired range with prescision to calculate average hit rate
         return weapon.damage / weapon.fireDelay;
     }
-
-    void TakeAction()
-    {
-        // Where do I want to go? What are my priorities?
-        Move();
-
-        // Are there any items neraby? Loot them?
-        Loot();
-
-        // Do I need to heal up?
-        if (CheckHealthThreshold())
-        {
-            HealUp();
-        }
-        else if (CheckArmorThreshold())
-        {
-            ArmorUp();
-        }
-
-        Fight();
-    }
-
-    private void Fight()
-    {
-        if (enemyInfos?.Count > 0)
-        {
-            enemyInfos.Sort((x, y) => y.DamageEstimation.CompareTo(x.DamageEstimation));
-            bot.Shoot(enemyInfos[0].Position - transform.position);
-        }
-    }
-
     bool CheckHealthThreshold()
     {
         return bot.health < Mathf.Ceil(100 * healthThreshold);
     }
-
     int CountHealingItems(int minHeal = 0)
     {
         var count = 0;
@@ -754,12 +700,10 @@ public class Daniel : MonoBehaviour
 
         return count;
     }
-
     bool CheckArmorThreshold()
     {
         return bot.armor < Mathf.Ceil(100 * armorThreshold);
     }
-
     int CountArmorItems(int minArmor = 0)
     {
         var count = 0;
@@ -772,7 +716,33 @@ public class Daniel : MonoBehaviour
 
         return count;
     }
+    bool CheckInsideRingDistanceTreshold()
+    {
+        var distanceToNextRingCenter = Vector3.Distance(transform.position, bot.NextRingCenter);
+        /*print($"Current distance to ring: {distanceToRingCenter-maxDistanceOutsideOfRing} vs {bot.RingRadius}" +
+            $"\n| Distance to next ring: {distanceToNextRingCenter-maxDistanceToNextRing} vs {bot.NextRingRadius}");
+            */
+        var isInNextRingThreshold = distanceToNextRingCenter - maxDistanceToNextRing < bot.NextRingRadius;
 
+        return bot.IsInRing && (bot.IsInNextRing || isInNextRingThreshold);
+    }
+    bool CheckHeldHealItems()
+    {
+        return CountHealingItems() < minAmountHealItems;
+    }
+    bool CheckHeldArmorItems()
+    {
+        return CountArmorItems() < minAmountArmorItems;
+    }
+    bool CheckForEquippedWeapon()
+    {
+        if (defaultWeapon == null)
+            defaultWeapon = bot.weapon;
+
+        return bot.weapon != null && bot.weapon != defaultWeapon;
+    }
+    #endregion
+    #region Movement and Obstacle avoidance
     void Move()
     {
         // Where do I want to go?
@@ -1017,7 +987,25 @@ public class Daniel : MonoBehaviour
 
         return possibleLocation;
     }
+    #endregion
+    #region Actions
+    void TakeAction()
+    {
+        // Are there any items neraby? Loot them?
+        Loot();
 
+        // Do I need to heal up?
+        if (CheckHealthThreshold())
+        {
+            HealUp();
+        }
+        else if (CheckArmorThreshold())
+        {
+            ArmorUp();
+        }
+
+        Fight();
+    }
     void Loot()
     {
         lootSurroundings = lookingForWeapon || lookingForArmor || lookingForHealth;
@@ -1044,7 +1032,6 @@ public class Daniel : MonoBehaviour
             }
         }
     }
-
     void EquipWeapon(PickupWeapon pickup)
     {
         // Ignore lower dps weapons
@@ -1059,7 +1046,6 @@ public class Daniel : MonoBehaviour
             bot.Pickup(pickup);
         }
     }
-
     void AddItemToInventory(PickupItem pickup)
     {
         bot.Pickup(pickup);
@@ -1079,7 +1065,6 @@ public class Daniel : MonoBehaviour
             // ...
         }
     }
-
     bool HealUp()
     {
         HealingItem healing = bot.FindItem<HealingItem>();
@@ -1092,7 +1077,6 @@ public class Daniel : MonoBehaviour
 
         return false;
     }
-
     bool ArmorUp()
     {
         ArmorItem armor = bot.FindItem<ArmorItem>();
@@ -1104,7 +1088,16 @@ public class Daniel : MonoBehaviour
         }
         return false;
     }
-
+    private void Fight()
+    {
+        if (enemyInfos?.Count > 0)
+        {
+            enemyInfos.Sort((x, y) => y.DamageEstimation.CompareTo(x.DamageEstimation));
+            bot.Shoot(enemyInfos[0].Position - transform.position);
+        }
+    }
+    #endregion
+    #region Debugging
     void Debug_MarkPosition(Vector3 position, Color color, float scale = 1)
     {
         if (!enableDebug) return;
@@ -1117,4 +1110,5 @@ public class Daniel : MonoBehaviour
         if (!enableDebug) return;
         Debug.Log(text);
     }
+    #endregion
 }
