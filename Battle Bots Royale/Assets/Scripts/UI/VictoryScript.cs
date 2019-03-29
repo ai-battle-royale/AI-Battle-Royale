@@ -33,14 +33,5 @@ public class VictoryScript : MonoBehaviour
             victoryText.SetActive(true);
             //victoryText.GetComponent<Renderer>().material.
         }
-        Debug.Log(bots.Length);
-        /*foreach (GameObject bot in bots)
-        {
-            manager = bot.GetComponent<BattleBotInterface>();
-            if (manager.health == 0)
-            {
-                text.text = "LOL";
-            }
-        }*/
     }
 }

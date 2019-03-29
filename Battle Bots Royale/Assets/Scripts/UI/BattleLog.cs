@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class BattleLog : MonoBehaviour
 {
@@ -41,14 +42,18 @@ public class BattleLog : MonoBehaviour
             {
                 bbInterface = bot.GetComponent<BattleBotInterface>();
                 botName = bbInterface.name;
-                if (bbInterface.health == 0)
+                
+                if (bbInterface.health <= 0)
                 {
+                    Debug.Log(bbInterface.killer);
                     if (bbInterface.killer != null)
                     {
+                        Debug.Log("Bot was killed by killer");
                         KilledBot(bot.name, bbInterface.killer);
                     }
                     else
                     {
+                        Debug.Log("Bot was killed by Ring");
                         Died(bot.name);
                     }
                     
@@ -60,7 +65,7 @@ public class BattleLog : MonoBehaviour
     void KilledBot(string textString, string killer)
     {
         canMove = true;
-        text.text += "<color=green>" + "<b>" + textString + "</b>" + "</color>" +" was killed by " + "<color=red>" + "<b>" + bbInterface.killer + "</b>" + "</color>";
+        text.text += "<color=green>" + "<b>" + textString + "</b>" + "</color>" +" was killed by " + "<color=red>" + "<b>" + killer + "</b>" + "</color>";
         Invoke("ClearText", 2f);
     }
     void Died(string bot)
