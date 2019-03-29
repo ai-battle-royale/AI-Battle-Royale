@@ -30,15 +30,20 @@ public class EventCameraManager : MonoBehaviour
     [SerializeField] KeyCode previousCamera;
     [SerializeField] KeyCode alternativeCamera;
 
-    int currentManualFocus = -1;
-    int currentEventFocus = -1;
-    bool isAlternativeActive = false;
-    GameObject activeVirtualCamera;
+    [SerializeField, ReadOnly] int currentManualFocus = -1;
+    [SerializeField, ReadOnly] int currentEventFocus = -1;
+    [SerializeField, ReadOnly] bool isAlternativeActive = false;
+    [SerializeField, ReadOnly] GameObject activeVirtualCameraGO;
 
     void Start()
     {
-
         Initialize();
+        
+        if (activeVirtualCameraGO == null)
+        {
+            currentManualFocus = botViews.Length;
+        }
+
         ShiftFocus(currentManualFocus);
     }
 
@@ -64,7 +69,11 @@ public class EventCameraManager : MonoBehaviour
     {
         if (Input.GetKeyDown(nextCamera)) ShiftFocus(currentManualFocus + 1);
         if (Input.GetKeyDown(previousCamera)) ShiftFocus(currentManualFocus - 1);
-        if (Input.GetKeyDown(previousCamera)) isAlternativeActive = !isAlternativeActive;
+        if (Input.GetKeyDown(alternativeCamera))
+        {
+            isAlternativeActive = !isAlternativeActive;
+            ShiftFocus(currentManualFocus);
+        }
 
         if (currentManualFocus == -1)
         {
@@ -89,23 +98,27 @@ public class EventCameraManager : MonoBehaviour
 
     void ShiftFocus(int botViewIndex)
     {
-        if (botViewIndex > botViews.Length || botViewIndex < -1)
+        if (botViewIndex <= -1)
         {
             currentManualFocus = -1; // set to event camera mode
+            Debug.Log(currentManualFocus);
+            return;
         }
         else
         {
             CameraSet cameraSet;
-
             currentManualFocus = botViewIndex;
-            if (currentManualFocus == botViews.Length)
+            Debug.Log(currentManualFocus);
+
+            if (currentManualFocus >= botViews.Length)
             {
+                currentManualFocus = botViews.Length;
                 UpdateTargetGroupWeight(true);
                 cameraSet = targetGroupCamSet;
             }
             else
             {
-                cameraSet = botViews[currentManualFocus].cameras;
+                cameraSet = botViews[botViewIndex].cameras;
             }
             ActivateCameraSet(cameraSet);
         }
@@ -113,19 +126,21 @@ public class EventCameraManager : MonoBehaviour
 
     void ActivateCameraSet(CameraSet cameraSet)
     {
-        if (activeVirtualCamera == null)
+        if (activeVirtualCameraGO != null)
         {
-            activeVirtualCamera = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera.VirtualCameraGameObject;
+            activeVirtualCameraGO.SetActive(false);
         }
 
-        activeVirtualCamera.SetActive(false);
         if (!isAlternativeActive)
         {
             cameraSet.primary.gameObject.SetActive(true);
+            activeVirtualCameraGO = cameraSet.primary.gameObject;
         }
         else
         {
             cameraSet.alternative.gameObject.SetActive(true);
+            activeVirtualCameraGO = cameraSet.alternative.gameObject;
+
         }
     }
 }
