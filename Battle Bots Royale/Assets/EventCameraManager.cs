@@ -26,25 +26,24 @@ public class EventCameraManager : MonoBehaviour
     [SerializeField] CinemachineTargetGroup botTargetGroup;
     [SerializeField] BotView[] botViews;
     [SerializeField] CameraSet targetGroupCamSet;
-    [SerializeField] KeyCode nextCamera;
-    [SerializeField] KeyCode previousCamera;
-    [SerializeField] KeyCode alternativeCamera;
 
-    [SerializeField, ReadOnly] int currentManualFocus = -1;
-    [SerializeField, ReadOnly] int currentEventFocus = -1;
+    [SerializeField] KeyCode nextCamera = KeyCode.D;
+    [SerializeField] KeyCode previousCamera = KeyCode.A;
+    [SerializeField] KeyCode toggleAlternativeCamera = KeyCode.S;
+    [SerializeField] KeyCode toggleEventCamera = KeyCode.W;
+
+    [SerializeField, ReadOnly] int currentManualFocus = 4;
+    [SerializeField, ReadOnly] int currentEventFocus = 4;
+
     [SerializeField, ReadOnly] bool isAlternativeActive = false;
+    [SerializeField, ReadOnly] bool isEventCameraActive = false;
+
     [SerializeField, ReadOnly] GameObject activeVirtualCameraGO;
 
     void Start()
     {
         Initialize();
-        
-        if (activeVirtualCameraGO == null)
-        {
-            currentManualFocus = botViews.Length;
-        }
-
-        ShiftFocus(currentManualFocus);
+        ShiftFocus(botViews.Length); // Group camera
     }
 
     private void Initialize()
@@ -67,18 +66,24 @@ public class EventCameraManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(nextCamera)) ShiftFocus(currentManualFocus + 1);
-        if (Input.GetKeyDown(previousCamera)) ShiftFocus(currentManualFocus - 1);
-        if (Input.GetKeyDown(alternativeCamera))
+        if (!isEventCameraActive)
         {
-            isAlternativeActive = !isAlternativeActive;
-            ShiftFocus(currentManualFocus);
+            if (Input.GetKeyDown(nextCamera))
+                ShiftFocus(currentManualFocus + 1);
+
+            if (Input.GetKeyDown(previousCamera))
+                ShiftFocus(currentManualFocus - 1);
+
+            if (Input.GetKeyDown(toggleAlternativeCamera))
+            {
+                isAlternativeActive = !isAlternativeActive;
+                ShiftFocus(currentManualFocus);
+            }
         }
 
-        if (currentManualFocus == -1)
+        if (Input.GetKeyDown(toggleEventCamera))
         {
-            // Run event focus
-            UpdateTargetGroupWeight();
+            isEventCameraActive = !isEventCameraActive;
         }
     }
 
@@ -98,30 +103,30 @@ public class EventCameraManager : MonoBehaviour
 
     void ShiftFocus(int botViewIndex)
     {
-        if (botViewIndex <= -1)
+        CameraSet cameraSet;
+        var focusIndex = (botViewIndex + botViews.Length + 1) % (botViews.Length + 1);
+        if (isEventCameraActive)
         {
-            currentManualFocus = -1; // set to event camera mode
-            Debug.Log(currentManualFocus);
-            return;
+            currentEventFocus = focusIndex;
+            Debug.Log("Event Focus: " + currentManualFocus);
         }
         else
         {
-            CameraSet cameraSet;
-            currentManualFocus = botViewIndex;
-            Debug.Log(currentManualFocus);
-
-            if (currentManualFocus >= botViews.Length)
-            {
-                currentManualFocus = botViews.Length;
-                UpdateTargetGroupWeight(true);
-                cameraSet = targetGroupCamSet;
-            }
-            else
-            {
-                cameraSet = botViews[botViewIndex].cameras;
-            }
-            ActivateCameraSet(cameraSet);
+            currentManualFocus = focusIndex;
+            Debug.Log("Manual Focus: " + currentManualFocus);
         }
+
+        if (focusIndex == botViews.Length)
+        {
+            UpdateTargetGroupWeight(true);
+            cameraSet = targetGroupCamSet;
+        }
+        else
+        {
+            cameraSet = botViews[focusIndex].cameras;
+        }
+
+        ActivateCameraSet(cameraSet);
     }
 
     void ActivateCameraSet(CameraSet cameraSet)
@@ -140,7 +145,6 @@ public class EventCameraManager : MonoBehaviour
         {
             cameraSet.alternative.gameObject.SetActive(true);
             activeVirtualCameraGO = cameraSet.alternative.gameObject;
-
         }
     }
 }
