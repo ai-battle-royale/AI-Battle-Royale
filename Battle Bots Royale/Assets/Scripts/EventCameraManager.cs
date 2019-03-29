@@ -86,6 +86,11 @@ public class EventCameraManager : MonoBehaviour
             isEventCameraActive = !isEventCameraActive;
         }
 
+        UpdateGroupFOV();   
+    }
+
+    private void UpdateGroupFOV()
+    {
         var extents = botTargetGroup.BoundingBox.extents;
         extents.y = 0;
         var zoomLevel = Mathf.Clamp01(extents.magnitude / 100f);

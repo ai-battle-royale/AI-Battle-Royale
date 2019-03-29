@@ -36,7 +36,7 @@ public class PickupSpawner : MonoBehaviour
 
             for (int i = 0; i < playerPrefabs.Length; i++)
             {
-                Spawn(playerPrefabs[i], true, 10f);
+                Spawn(playerPrefabs[i], true, 3f);
             }
         }
 
