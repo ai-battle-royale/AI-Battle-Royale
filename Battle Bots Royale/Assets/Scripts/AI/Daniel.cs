@@ -782,8 +782,6 @@ public class Daniel : MonoBehaviour
             UpdateDesiredDirection();
         }
 
-        Debug_MarkPosition(desiredPosition, Color.yellow);
-
         // Is there anything too close to me?
         foreach (var obstacle in surroundingObstacles)
         {
@@ -793,10 +791,11 @@ public class Daniel : MonoBehaviour
         // Avoid anything that is blocking my way
         AvoidBlockingObstacles();
 
-        bot.Move(currentDirection);
+        Debug_MarkPosition(desiredPosition, Color.magenta);
+        Debug_MarkPosition(desiredDirection, Color.magenta);
+        Debug_MarkPosition(currentDirection, Color.red);
 
-        Debug.DrawLine(transform.position, transform.position + currentDirection.normalized * 2, Color.magenta);
-        Debug.DrawLine(transform.position, transform.position + desiredDirection.normalized * 2, Color.yellow);
+        bot.Move(currentDirection);
     }
 
     private void UpdateDesiredDirection()

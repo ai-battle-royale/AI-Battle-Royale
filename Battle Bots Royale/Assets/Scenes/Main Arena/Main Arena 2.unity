@@ -13214,7 +13214,7 @@ GameObject:
   - component: {fileID: 444901767}
   - component: {fileID: 444901766}
   m_Layer: 0
-  m_Name: Pickups
+  m_Name: PickupSpawner
   m_TagString: PickupParent
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15146,7 +15146,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 101, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1130347413}
+  m_Father: {fileID: 1158686162}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: 0, z: 0}
 --- !u!114 &499545322
@@ -30266,7 +30266,7 @@ Transform:
   - {fileID: 303021072}
   - {fileID: 856501685}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1009113437
 Mesh:
@@ -34042,38 +34042,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1127385838}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1130347412
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1130347413}
-  m_Layer: 0
-  m_Name: Cameras
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1130347413
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1130347412}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 499545321}
-  - {fileID: 1518168059}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1132540567
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35118,8 +35086,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1158686162}
+  - component: {fileID: 1158686163}
   m_Layer: 0
-  m_Name: Event Camera Manager
+  m_Name: EventCameraManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35135,10 +35104,25 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 499545321}
+  - {fileID: 1518168059}
+  - {fileID: 1381355403}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1158686163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1158686161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309c59f2fa9faf34e893cf42cb57bb69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &1168446151
 Mesh:
   m_ObjectHideFlags: 0
@@ -41696,12 +41680,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1381355401}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 1158686162}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1388362717
 Mesh:
@@ -45951,7 +45935,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 300783023}
-  m_Father: {fileID: 1130347413}
+  m_Father: {fileID: 1158686162}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1518168060
@@ -65224,6 +65208,56 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1842683936}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: obstacleAvoidanceRadius
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: frontRayCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: frontRaySpread
+      value: 0.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: healthThreshold
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: armorThreshold
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: minAmountArmorItems
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: minAmountHealItems
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: maxDistanceToNextRing
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: desirePriorityBonus
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 516255422039233988, guid: 6271bed45cd5fcd4da00647c58ce0082,
+        type: 3}
+      propertyPath: desiredState
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6271bed45cd5fcd4da00647c58ce0082, type: 3}
 --- !u!1001 &5038338874818864213
