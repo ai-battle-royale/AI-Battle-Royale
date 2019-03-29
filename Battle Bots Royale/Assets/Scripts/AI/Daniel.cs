@@ -19,14 +19,6 @@ public class Daniel : MonoBehaviour
         Survive
     }
 
-    enum BrainState
-    {
-        Looting,
-        Chasing,
-        Evading,
-        Victory
-    }
-
     [Serializable]
     class AdvancedScanInfo
     {
@@ -206,7 +198,6 @@ public class Daniel : MonoBehaviour
     [Header("-----------------")]
     [Header("Brain Information")]
     [Header("_________________")]
-    [ReadOnly, SerializeField] BrainState brainState;
     [ReadOnly, SerializeField] Vector3 desiredDirection;
 
     [Header("Actions")]
@@ -369,9 +360,9 @@ public class Daniel : MonoBehaviour
             // Fight with enough items
             // Flee when in danger
             case Focus.Loot:
-                weaponPriority += desirePriorityBonus;
-                healPriority += desirePriorityBonus;
-                armorPriority += desirePriorityBonus;
+                weaponPriority += desirePriorityBonus * 2;
+                healPriority += desirePriorityBonus * 3;
+                armorPriority += desirePriorityBonus * 3;
                 //fightPriority   = 0;
                 //fleePriority    = 0;
                 explorePriority += desirePriorityBonus;
@@ -384,10 +375,10 @@ public class Daniel : MonoBehaviour
             // Look for minimum items when none are available 
             //  to reach threshold
             case Focus.Hunt:
-                weaponPriority += desirePriorityBonus;
+                weaponPriority += desirePriorityBonus * 2;
                 //healPriority    = 0;
-                armorPriority += desirePriorityBonus;
-                fightPriority += desirePriorityBonus;
+                armorPriority += desirePriorityBonus * 2;
+                fightPriority += desirePriorityBonus * 3;
                 //fleePriority    = 0;
                 explorePriority += desirePriorityBonus;
                 //centerPriority  = 0;
@@ -397,10 +388,10 @@ public class Daniel : MonoBehaviour
             //  enough time passed and fewer enemies remain
             case Focus.Survive:
                 //weaponPriority  = 0;
-                healPriority += desirePriorityBonus;
-                armorPriority += desirePriorityBonus;
+                healPriority += desirePriorityBonus * 2;
+                armorPriority += desirePriorityBonus * 2;
                 //fightPriority   = 0;
-                fleePriority += desirePriorityBonus;
+                fleePriority += desirePriorityBonus * 3;
                 //explorePriority = 0;
                 centerPriority += desirePriorityBonus;
                 break;
@@ -871,13 +862,19 @@ public class Daniel : MonoBehaviour
         else if (knowWeaponPickups?.Count > 0)
         {
             knowWeaponPickups.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
-            desiredPosition = knowWeaponPickups[0].Pickup.transform.position;
-            Log("M Weapon");
-            return true;
+            foreach (var weaponPickup in knowWeaponPickups)
+            {
+                if (weaponPickup?.Pickup != null)
+                {
+                    desiredPosition = knowWeaponPickups[0].Pickup.transform.position;
+                    Log("M Known Weapon");
+                    return true;
+                }
+            }
+            
         }
         return false;
     }
-
     bool MoveTowardsArmor()
     {
 
@@ -895,13 +892,18 @@ public class Daniel : MonoBehaviour
         if (knownArmorInfos?.Count > 0)
         {
             knownArmorInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
-            desiredPosition = knownArmorInfos[0].Pickup.transform.position;
-            Log("M Armor");
-            return true;
+            foreach (var armorInfo in knownArmorInfos)
+            {
+                if (armorInfo?.Pickup != null)
+                {
+                    desiredPosition = armorInfo.Pickup.transform.position;
+                    Log("M Known Armor");
+                    return true;
+                }
+            }
         }
         return false;
     }
-
     bool MoveTowardsHeal()
     {
         // TODO compare amount
@@ -918,13 +920,18 @@ public class Daniel : MonoBehaviour
         if (knownHealInfos?.Count > 0)
         {
             knownHealInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
-            desiredPosition = knownHealInfos[0].Pickup.transform.position;
-            Log("M Heal");
-            return true;
+            foreach (var healInfo in knownHealInfos)
+            {
+                if (healInfo?.Pickup != null)
+                {
+                    desiredPosition = healInfo.Pickup.transform.position;
+                    Log("M Known Heal");
+                    return true;
+                }
+            }
         }
         return false;
     }
-
     bool MoveTowardsFight()
     {
         // TODO - Get enemys locations from memory
@@ -997,17 +1004,20 @@ public class Daniel : MonoBehaviour
         // Are there any items neraby? Loot them?
         Loot();
 
-        // Do I need to heal up?
-        if (CheckHealthThreshold())
-        {
-            HealUp();
-        }
-        else if (CheckArmorThreshold())
-        {
-            ArmorUp();
-        }
-
         Fight();
+
+        // Do I need to heal up?
+        if (!canSeeEnemy || !shouldFight)
+        {
+            if (CheckHealthThreshold())
+            {
+                HealUp();
+            }
+            else if (CheckArmorThreshold())
+            {
+                ArmorUp();
+            }
+        }
     }
     void Loot()
     {
