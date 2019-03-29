@@ -192,6 +192,7 @@ public class Daniel : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float maxDistanceToNextRing = 75f;
+    [SerializeField] private float maxExploreTime = 3f;
 
     [Header("Prioritiy Bonuses")]
     [SerializeField] private int desirePriorityBonus = 1;
@@ -1000,7 +1001,7 @@ public class Daniel : MonoBehaviour
         if (explorePosition.Equals(Vector3.negativeInfinity))
         {
             desiredPosition = explorePosition = GetRandomLocationInsideRing();
-            newExploreLocationTimestamp = Time.time + 10f; // ten second timer
+            newExploreLocationTimestamp = Time.time + maxExploreTime; // ten second timer
             Log("M Explore");
         }
         return true;
