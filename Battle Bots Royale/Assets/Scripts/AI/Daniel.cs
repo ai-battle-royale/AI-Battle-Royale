@@ -487,14 +487,18 @@ public class Daniel : MonoBehaviour
         // Create a list of pickups, enemies and possible obstacles
         //  and loop over all scan results and remember them
         currentAngleOffset += 2 * Mathf.PI / raySteps;
+
         ClearInfo();
-        AssignScanResults(ScanSurroundings(LayerMask.GetMask("Bot", "Pickup")));
+
+        AssignScanResults(ScanSurroundings(), true);
         AssignScanResults(ScanSurroundings(~LayerMask.GetMask("Bot", "Pickup")));
 
         // Where do I want to go? What are my priorities?
+        // TODO improve fleeing (moving left and right to dodge)
         Move();
 
         // Act upon brain and memory
+        // TODO better situation analysis (should I flee before healing?)
         TakeAction();
     }
 
@@ -508,7 +512,7 @@ public class Daniel : MonoBehaviour
         RebuildPriorities();
     }
     #endregion
-    #region Reconnaissance
+    #region Reconnaissance (Scanning for objects)
     List<AdvancedScanInfo> ScanSurroundings(LayerMask layerMask = default)
     {
         var angleStep = 2 * Mathf.PI / rayCount;
@@ -529,7 +533,7 @@ public class Daniel : MonoBehaviour
         return scans;
     }
 
-    void AssignScanResults(List<AdvancedScanInfo> scans)
+    void AssignScanResults(List<AdvancedScanInfo> scans, bool ignoreObstacles = false)
     {
         var direction = currentDirection;
 
@@ -545,7 +549,7 @@ public class Daniel : MonoBehaviour
                 // Remember enemy
                 AddEnemyInfo(scanHit);
             }
-            else if (scanHit.Type == HitType.World)
+            else if (!ignoreObstacles && scanHit.Type == HitType.World)
             {
                 // Note obstacles
                 AddObstacleInfo(scanHit);
@@ -857,7 +861,7 @@ public class Daniel : MonoBehaviour
     bool MoveTowardsWeapon()
     {
         // TODO compare dps per distance metric
-        if (weaponPickupInfos?.Count > 0)
+        if (canSeeWeapon)
         {
             weaponPickupInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
             desiredPosition = weaponPickupInfos[0].Pickup.transform.position;
@@ -879,7 +883,7 @@ public class Daniel : MonoBehaviour
 
         // TODO compare amount
         var armorInfos = itemPickupInfos.FindAll(x => x.Type == PickupType.ArmorConsumable);
-        if (armorInfos?.Count > 0)
+        if (canSeeItem && armorInfos?.Count > 0)
         {
             armorInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
             desiredPosition = armorInfos[0].Pickup.transform.position;
@@ -902,7 +906,7 @@ public class Daniel : MonoBehaviour
     {
         // TODO compare amount
         var healInfos = itemPickupInfos.FindAll(x => x.Type == PickupType.HealingConsumable);
-        if (healInfos?.Count > 0)
+        if (canSeeItem && healInfos?.Count > 0)
         {
             healInfos.Sort((x, y) => x.GetDistanceTo(transform.position).CompareTo(y.GetDistanceTo(transform.position)));
             desiredPosition = healInfos[0].Pickup.transform.position;
@@ -926,7 +930,7 @@ public class Daniel : MonoBehaviour
         // TODO - Get enemys locations from memory
         // TODO - Duck in and out of range/cover depending on weapon fire rate
         // Move in range of the enemy with the highest tracked damage taken
-        if (enemyInfos?.Count > 0)
+        if (canSeeEnemy && enemyInfos?.Count > 0)
         {
             enemyInfos.Sort((x, y) => y.DamageEstimation.CompareTo(x.DamageEstimation));
 
