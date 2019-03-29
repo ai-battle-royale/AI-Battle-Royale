@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-
+    public AudioSource fireAudioSource;
+    public AudioSource impactAudioSource;
+    public GameObject light;
     public LayerMask mask;
     public float startVelocity = 20f;
     public float range = -1f;
@@ -27,6 +29,8 @@ public class Projectile : MonoBehaviour
         StartCoroutine(DestroyAfterLifeTime(range / startVelocity));
 
         hasFired = true;
+
+        fireAudioSource.Play();
     }
 
     void FixedUpdate() {
@@ -51,7 +55,9 @@ public class Projectile : MonoBehaviour
                 enemy.TakeDamage(damage, owner);
             }
 
-            Destroy(gameObject);
+            StartCoroutine(DestroyAfter(2f));
+            light.SetActive(false);
+            impactAudioSource.Play();
 
             hasFired = false;
         } else {
@@ -64,10 +70,13 @@ public class Projectile : MonoBehaviour
     IEnumerator DestroyAfterLifeTime (float lifeTime) {
         yield return new WaitForSeconds(lifeTime);
 
-        Destroy(gameObject);
+        StartCoroutine(DestroyAfter(2f));
+        light.SetActive(false);
     }
 
     IEnumerator DestroyAfter (float lifeTime) {
+        yield return new WaitForSeconds(lifeTime);
 
+        Destroy(gameObject);
     }
 }
