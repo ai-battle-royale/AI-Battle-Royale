@@ -86,7 +86,10 @@ public class EventCameraManager : MonoBehaviour
             isEventCameraActive = !isEventCameraActive;
         }
 
-        
+        var extents = botTargetGroup.BoundingBox.extents;
+        extents.y = 0;
+        var zoomLevel = Mathf.Clamp01(extents.magnitude / 100f);
+        targetGroupCamSet.primary.GetComponent<CinemachineVirtualCamera>().m_Lens.FieldOfView = Mathf.Lerp(20f, 110f, zoomLevel);
     }
 
     void UpdateTargetGroupWeight(bool reset = false)
